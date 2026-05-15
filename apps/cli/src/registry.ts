@@ -62,11 +62,22 @@ export const DEVICE_REGISTRY: readonly DeviceEntry[] = [
   { name: 'EWS', create: () => new EWS(), controls: EWSControls },
 ]
 
-/** Register every device in the registry against the bus. */
-export function registerAll(bus: IBus): void {
+/**
+ * Register every device in the registry against the bus.  Returns parallel
+ * arrays of entries and the freshly-registered instances so callers can read
+ * state from them later.
+ */
+export function registerAll(bus: IBus): {
+  entries: readonly DeviceEntry[]
+  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
+  devices: readonly Device<any, any>[]
+} {
+  // biome-ignore lint/suspicious/noExplicitAny: same
+  const devices: Device<any, any>[] = []
   for (const entry of DEVICE_REGISTRY) {
-    bus.registerDevice(entry.create())
+    devices.push(bus.registerDevice(entry.create()))
   }
+  return { entries: DEVICE_REGISTRY, devices }
 }
 
 export function findDeviceEntry(name: string): DeviceEntry | undefined {

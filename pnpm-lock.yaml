@@ -35,46 +35,6 @@ importers:
       '@emdzej/ibusx-transport-serial':
         specifier: workspace:*
         version: link:../../packages/transport-serial
-      commander:
-        specifier: ^14.0.3
-        version: 14.0.3
-      picocolors:
-        specifier: ^1.1.1
-        version: 1.1.1
-      serialport:
-        specifier: ^13.0.0
-        version: 13.0.0
-    devDependencies:
-      '@emdzej/ibusx-tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/tsconfig
-      '@types/node':
-        specifier: ^25.8.0
-        version: 25.8.0
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vitest:
-        specifier: ^4.1.6
-        version: 4.1.6(@types/node@25.8.0)(vite@8.0.12(@types/node@25.8.0))
-
-  apps/tui:
-    dependencies:
-      '@emdzej/ibusx-commands':
-        specifier: workspace:*
-        version: link:../../packages/commands
-      '@emdzej/ibusx-core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@emdzej/ibusx-devices':
-        specifier: workspace:*
-        version: link:../../packages/devices
-      '@emdzej/ibusx-protocol':
-        specifier: workspace:*
-        version: link:../../packages/protocol
-      '@emdzej/ibusx-transport-serial':
-        specifier: workspace:*
-        version: link:../../packages/transport-serial
       '@inkjs/ui':
         specifier: ^2.0.0
         version: 2.0.0(ink@7.0.3(@types/react@19.2.14)(react@19.2.6))
@@ -84,9 +44,15 @@ importers:
       ink:
         specifier: ^7.0.3
         version: 7.0.3(@types/react@19.2.14)(react@19.2.6)
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
       react:
         specifier: ^19.2.6
         version: 19.2.6
+      serialport:
+        specifier: ^13.0.0
+        version: 13.0.0
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*

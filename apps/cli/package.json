@@ -24,13 +24,17 @@
     "@emdzej/ibusx-devices": "workspace:*",
     "@emdzej/ibusx-protocol": "workspace:*",
     "@emdzej/ibusx-transport-serial": "workspace:*",
+    "@inkjs/ui": "^2.0.0",
     "commander": "^14.0.3",
+    "ink": "^7.0.3",
     "picocolors": "^1.1.1",
+    "react": "^19.2.6",
     "serialport": "^13.0.0"
   },
   "devDependencies": {
     "@emdzej/ibusx-tsconfig": "workspace:*",
     "@types/node": "^25.8.0",
+    "@types/react": "^19.2.14",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   }

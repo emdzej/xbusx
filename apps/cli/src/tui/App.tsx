@@ -1,13 +1,13 @@
 import type { Device, IBus } from '@emdzej/ibusx-core'
 import { Box, useApp, useInput } from 'ink'
 import { type ReactElement, useEffect, useState } from 'react'
+import type { DeviceEntry } from '../registry.js'
 import { appendLog, attachBusListeners } from './bus.js'
 import { DeviceList } from './components/DeviceList.js'
 import { EventLog } from './components/EventLog.js'
 import { Footer } from './components/Footer.js'
 import { StatePane } from './components/StatePane.js'
 import { type LogEntry, nextLogId } from './log.js'
-import type { DeviceEntry } from './registry.js'
 
 interface AppProps {
   bus: IBus

@@ -1,9 +1,0 @@
-{
-  "extends": "@emdzej/ibusx-tsconfig/library.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "types": ["node"],
-    "jsx": "react-jsx"
-  },
-  "include": ["src/**/*", "test/**/*"]
-}

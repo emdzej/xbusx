@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { appendLog } from '../src/bus.js'
-import type { LogEntry } from '../src/log.js'
-import { LOG_CAPACITY } from '../src/log.js'
+import { appendLog } from '../src/tui/bus.js'
+import type { LogEntry } from '../src/tui/log.js'
+import { LOG_CAPACITY } from '../src/tui/log.js'
 
 const sys = (id: number): LogEntry => ({ id, kind: 'system', ts: id, message: `m${id}` })
 
