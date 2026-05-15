@@ -1,0 +1,39 @@
+{
+  "name": "@emdzej/ibusx-tui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "ibusx-tui": "./dist/bin/ibusx-tui.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "start": "node dist/bin/ibusx-tui.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@emdzej/ibusx-commands": "workspace:*",
+    "@emdzej/ibusx-core": "workspace:*",
+    "@emdzej/ibusx-devices": "workspace:*",
+    "@emdzej/ibusx-protocol": "workspace:*",
+    "@emdzej/ibusx-transport-serial": "workspace:*",
+    "@inkjs/ui": "^2.0.0",
+    "commander": "^14.0.3",
+    "ink": "^7.0.3",
+    "react": "^19.2.6"
+  },
+  "devDependencies": {
+    "@emdzej/ibusx-tsconfig": "workspace:*",
+    "@types/node": "^25.8.0",
+    "@types/react": "^19.2.14",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}
