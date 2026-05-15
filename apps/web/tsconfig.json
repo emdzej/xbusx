@@ -1,0 +1,14 @@
+{
+  "extends": "@emdzej/ibusx-tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["w3c-web-serial"],
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.svelte", "vite.config.ts"]
+}

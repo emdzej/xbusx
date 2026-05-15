@@ -1,0 +1,29 @@
+{
+  "name": "@emdzej/ibusx-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@emdzej/ibusx-commands": "workspace:*",
+    "@emdzej/ibusx-core": "workspace:*",
+    "@emdzej/ibusx-devices": "workspace:*",
+    "@emdzej/ibusx-protocol": "workspace:*",
+    "@emdzej/ibusx-transport-web-serial": "workspace:*"
+  },
+  "devDependencies": {
+    "@emdzej/ibusx-tsconfig": "workspace:*",
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@types/w3c-web-serial": "^1.0.8",
+    "svelte": "^5.55.7",
+    "svelte-check": "^4.4.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13"
+  }
+}

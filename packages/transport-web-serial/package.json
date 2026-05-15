@@ -1,0 +1,35 @@
+{
+  "name": "@emdzej/ibusx-transport-web-serial",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@emdzej/ibusx-core": "workspace:*",
+    "@emdzej/ibusx-protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@emdzej/ibusx-tsconfig": "workspace:*",
+    "@types/w3c-web-serial": "^1.0.8",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}

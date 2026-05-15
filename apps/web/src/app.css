@@ -1,0 +1,67 @@
+:root {
+  --bg: #0f1115;
+  --bg-elev: #161a22;
+  --bg-elev-2: #1e2330;
+  --border: #2a3142;
+  --fg: #d6dbe4;
+  --fg-muted: #8892a4;
+  --accent: #7dd3fc;
+  --accent-strong: #38bdf8;
+  --green: #86efac;
+  --yellow: #fde047;
+  --magenta: #f0abfc;
+  --red: #fca5a5;
+  --mono: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--border);
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+button.primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
