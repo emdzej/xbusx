@@ -2,3 +2,7 @@ packages:
   - 'packages/*'
   - 'apps/*'
   - 'tooling/*'
+
+# Native build scripts that pnpm 11 requires explicit approval for.
+allowBuilds:
+  '@serialport/bindings-cpp': true
