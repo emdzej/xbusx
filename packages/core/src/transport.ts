@@ -6,9 +6,9 @@ export type TransportEvents = {
   /** Transport-layer error (port closed, hardware fault, etc.). */
   error: Error
   /** Connection established. */
-  open: void
+  open: undefined
   /** Connection torn down. */
-  close: void
+  close: undefined
 }
 
 /**

@@ -1,6 +1,6 @@
 import { parseMFLButton, parseVolume } from '@emdzej/ibusx-commands'
 import { IBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, decode } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES } from '@emdzej/ibusx-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { MFL, MFLControls } from '../src/mfl.js'
 

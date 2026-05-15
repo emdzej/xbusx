@@ -3,7 +3,7 @@ import { TypedEmitter } from '../src/emitter.js'
 
 type Events = {
   data: { value: number }
-  open: void
+  open: undefined
   error: Error
 }
 

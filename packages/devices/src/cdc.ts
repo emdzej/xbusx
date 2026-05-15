@@ -3,7 +3,6 @@ import {
   type CDCFunction,
   type CDCRequest,
   type CDCStatus,
-  type CDCSubcommand,
   parseCDCRequest,
 } from '@emdzej/ibusx-commands'
 import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
@@ -24,9 +23,9 @@ export type CDCEvents = {
   requestReceived: CDCRequest
   statusBroadcast: CDCEmulatorState
   /** Fired with semantic transitions so listeners can react without parsing status frames. */
-  playStarted: void
-  playStopped: void
-  playPaused: void
+  playStarted: undefined
+  playStopped: undefined
+  playPaused: undefined
   trackChanged: { disc: number; track: number }
 }
 

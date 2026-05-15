@@ -58,7 +58,7 @@ export class MemoryTransport implements Transport {
       queueMicrotask(() => this.events.emit('data', bytes))
     }
     const peer = this.peer
-    if (peer && peer.opened) {
+    if (peer?.opened) {
       queueMicrotask(() => peer.events.emit('data', bytes))
     }
   }
