@@ -1,4 +1,4 @@
-# @ibusx/protocol
+# @emdzej/ibusx-protocol
 
 The byte-level protocol primitives for BMW I-Bus and K-Bus. Pure functions, no state, no I/O.
 
@@ -26,7 +26,7 @@ See [`docs/protocol/framing.md`](../../docs/protocol/framing.md) for the full sp
 ## Quick example
 
 ```ts
-import { encode, decode, FrameStream } from '@ibusx/protocol'
+import { encode, decode, FrameStream } from '@emdzej/ibusx-protocol'
 
 // Encode an IKE → broadcast ignition status (KL-30 = off)
 const bytes = encode({

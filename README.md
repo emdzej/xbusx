@@ -10,11 +10,11 @@ This is a pnpm + turborepo monorepo containing both docs and code:
 
 - [`docs/`](docs/) — the protocol reference (markdown).
 - [`packages/`](packages/) — the implementation:
-  - [`@ibusx/protocol`](packages/protocol) — framing, addressing, checksums.
-  - `@ibusx/commands` *(planned)* — per-command codecs.
-  - `@ibusx/core` *(planned)* — IBus class, Vehicle context, Device base.
-  - `@ibusx/devices` *(planned)* — device twins with state and reflective controls.
-  - `@ibusx/transport-*` *(planned)* — serial, web-serial, gateway client.
+  - [`@emdzej/ibusx-protocol`](packages/protocol) — framing, addressing, checksums.
+  - `@emdzej/ibusx-commands` *(planned)* — per-command codecs.
+  - `@emdzej/ibusx-core` *(planned)* — IBus class, Vehicle context, Device base.
+  - `@emdzej/ibusx-devices` *(planned)* — device twins with state and reflective controls.
+  - `@emdzej/ibusx-transport-*` *(planned)* — serial, web-serial, gateway client.
 - [`apps/`](apps/) *(planned)*:
   - `cli` (Commander) — list / identify / log / invoke controls.
   - `tui` (Ink) — same actions wrapped in an interactive terminal UI.

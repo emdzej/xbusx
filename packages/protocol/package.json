@@ -1,5 +1,5 @@
 {
-  "name": "@ibusx/protocol",
+  "name": "@emdzej/ibusx-protocol",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -23,7 +23,7 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "devDependencies": {
-    "@ibusx/tsconfig": "workspace:*",
+    "@emdzej/ibusx-tsconfig": "workspace:*",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   }

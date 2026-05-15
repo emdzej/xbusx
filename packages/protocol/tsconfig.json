@@ -1,5 +1,5 @@
 {
-  "extends": "@ibusx/tsconfig/library.json",
+  "extends": "@emdzej/ibusx-tsconfig/library.json",
   "compilerOptions": {
     "noEmit": true
   },
