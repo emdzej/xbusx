@@ -13,7 +13,10 @@
     "typecheck": "turbo run typecheck",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "web": "pnpm --filter @emdzej/ibusx-web dev",
+    "web:build": "pnpm --filter @emdzej/ibusx-web build",
+    "web:preview": "pnpm --filter @emdzej/ibusx-web preview"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.15",
