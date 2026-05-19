@@ -20,21 +20,21 @@ importers:
 
   apps/cli:
     dependencies:
-      '@emdzej/ibusx-commands':
-        specifier: workspace:*
-        version: link:../../packages/commands
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@emdzej/ibusx-devices':
+      '@emdzej/ikbus-commands':
         specifier: workspace:*
-        version: link:../../packages/devices
-      '@emdzej/ibusx-protocol':
+        version: link:../../packages/ikbus-commands
+      '@emdzej/ikbus-devices':
         specifier: workspace:*
-        version: link:../../packages/protocol
-      '@emdzej/ibusx-transport-serial':
+        version: link:../../packages/ikbus-devices
+      '@emdzej/ikbus-protocol':
         specifier: workspace:*
-        version: link:../../packages/transport-serial
+        version: link:../../packages/ikbus-protocol
+      '@emdzej/ikbus-transport-serial':
+        specifier: workspace:*
+        version: link:../../packages/ikbus-transport-serial
       '@inkjs/ui':
         specifier: ^2.0.0
         version: 2.0.0(ink@7.0.3(@types/react@19.2.14)(react@19.2.6))
@@ -72,21 +72,21 @@ importers:
 
   apps/web:
     dependencies:
-      '@emdzej/ibusx-commands':
-        specifier: workspace:*
-        version: link:../../packages/commands
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@emdzej/ibusx-devices':
+      '@emdzej/ikbus-commands':
         specifier: workspace:*
-        version: link:../../packages/devices
-      '@emdzej/ibusx-protocol':
+        version: link:../../packages/ikbus-commands
+      '@emdzej/ikbus-devices':
         specifier: workspace:*
-        version: link:../../packages/protocol
-      '@emdzej/ibusx-transport-web-serial':
+        version: link:../../packages/ikbus-devices
+      '@emdzej/ikbus-protocol':
         specifier: workspace:*
-        version: link:../../packages/transport-web-serial
+        version: link:../../packages/ikbus-protocol
+      '@emdzej/ikbus-transport-web-serial':
+        specifier: workspace:*
+        version: link:../../packages/ikbus-transport-web-serial
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
@@ -110,27 +110,11 @@ importers:
         specifier: ^8.0.13
         version: 8.0.13(@types/node@25.8.0)
 
-  packages/commands:
-    dependencies:
-      '@emdzej/ibusx-protocol':
-        specifier: workspace:*
-        version: link:../protocol
-    devDependencies:
-      '@emdzej/ibusx-tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/tsconfig
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vitest:
-        specifier: ^4.1.6
-        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
-
   packages/core:
     dependencies:
-      '@emdzej/ibusx-protocol':
+      '@emdzej/ikbus-protocol':
         specifier: workspace:*
-        version: link:../protocol
+        version: link:../ikbus-protocol
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
@@ -145,17 +129,45 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
-  packages/devices:
-    dependencies:
-      '@emdzej/ibusx-commands':
+  packages/dbus-protocol:
+    devDependencies:
+      '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
-        version: link:../commands
+        version: link:../../tooling/tsconfig
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.6
+        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
+
+  packages/ikbus-commands:
+    dependencies:
+      '@emdzej/ikbus-protocol':
+        specifier: workspace:*
+        version: link:../ikbus-protocol
+    devDependencies:
+      '@emdzej/ibusx-tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.6
+        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
+
+  packages/ikbus-devices:
+    dependencies:
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../core
-      '@emdzej/ibusx-protocol':
+      '@emdzej/ikbus-commands':
         specifier: workspace:*
-        version: link:../protocol
+        version: link:../ikbus-commands
+      '@emdzej/ikbus-protocol':
+        specifier: workspace:*
+        version: link:../ikbus-protocol
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
@@ -170,7 +182,7 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
-  packages/protocol:
+  packages/ikbus-protocol:
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
@@ -182,14 +194,14 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
-  packages/transport-serial:
+  packages/ikbus-transport-serial:
     dependencies:
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../core
-      '@emdzej/ibusx-protocol':
+      '@emdzej/ikbus-protocol':
         specifier: workspace:*
-        version: link:../protocol
+        version: link:../ikbus-protocol
       serialport:
         specifier: ^13.0.0
         version: 13.0.0
@@ -207,14 +219,14 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
-  packages/transport-web-serial:
+  packages/ikbus-transport-web-serial:
     dependencies:
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../core
-      '@emdzej/ibusx-protocol':
+      '@emdzej/ikbus-protocol':
         specifier: workspace:*
-        version: link:../protocol
+        version: link:../ikbus-protocol
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
