@@ -58,16 +58,24 @@ Lives under `packages/commands/src/nav/` since NAV is the broadcaster.
 
 ### Doors / body / immobiliser (GM / ZKE / EWS)
 
-| Byte | Name | Priority | Note |
-|---:|---|---|---|
-| `0x70` | Remote control central locking status | high | RF/IR remote-key broadcasts; complements our `0x72` remote-key codec. |
-| `0x71` | Rain sensor status | mid | RLS broadcasts beyond the `0x59` light-sensor frame. |
-| `0x77` | Wiper status | mid | |
-| `0x75` | Wiper status request | mid | |
-| `0x78` | Seat Memory | mid | E38/E39 driver+passenger seat memory recall events. |
-| `0x7C` | Sunroof status | low | SHD broadcasts. |
-| `0x7D` | Sunroof control | low | Sunroof commands. |
-| `0x6D` | Mirror control | low | |
+All entries below were source-checked in Batch 4 (2026-05-19) against
+Wilhelm-docs (no per-command page exists for any of them; the only `gm/`
+pages are `76.md`, `79.md`, `7a.md` which we already implement) and
+BlueBus (no `IBUS_CMD_*` constants matching these bytes, no handler
+branches in `handler_ibus.c`).  navcoder names them in its
+`Proc_5_4_498820` command-name table but has **no parser** for any of
+them.  **All eight are held until we have a real-bus capture.**
+
+| Byte | Name (per navcoder) | Note |
+|---:|---|---|
+| `0x70` | Remote control central locking status | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x71` | Rain sensor status | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x75` | Wiper status request | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x77` | Wiper status | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x78` | Seat Memory | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x7C` | Sunroof status | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x7D` | Sunroof control | No Wilhelm/BlueBus reference; navcoder name only. |
+| `0x6D` | Mirror control | No Wilhelm/BlueBus reference; navcoder name only. |
 
 ### Climate / heating (IHKA / STH / FHK)
 
