@@ -1,4 +1,14 @@
-import { buildIgnitionStatus, buildSensors, buildSpeedRpm } from '@emdzej/ibusx-commands'
+import {
+  buildIgnitionStatus,
+  buildIKECCMText,
+  buildIKENumeric,
+  buildIKEOBCText,
+  buildIKEReplicateData,
+  buildSensors,
+  buildSpeedRpm,
+  IKE_NUMERIC_X1,
+  IKE_OBC_PROPERTY,
+} from '@emdzej/ibusx-commands'
 import { IBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
 import { DEVICE_ADDRESSES, encode } from '@emdzej/ibusx-protocol'
 import { describe, expect, it, vi } from 'vitest'
@@ -78,6 +88,95 @@ describe('IKE twin', () => {
     const sent = txFrames.mock.calls[0]![0]
     expect(sent.destination).toBe(DEVICE_ADDRESSES.IKE)
     expect(Array.from(sent.payload)).toEqual([0x10])
+    await bus.stop()
+  })
+
+  it('captures inbound CCM text writes addressed to the IKE', async () => {
+    const { transport, ike, bus } = await setup()
+    const fn = vi.fn()
+    ike.events.on('ccmTextUpdate', fn)
+
+    transport.inject(encode(buildIKECCMText({ text: 'OIL LEVEL OK' })))
+    expect(fn).toHaveBeenCalledWith({ kind: 'persist', text: 'OIL LEVEL OK' })
+    expect(ike.state.ccmText?.text).toBe('OIL LEVEL OK')
+
+    transport.inject(encode(buildIKECCMText({ kind: 'clear' })))
+    expect(ike.state.ccmText?.kind).toBe('clear')
+
+    await bus.stop()
+  })
+
+  it('captures inbound numeric writes', async () => {
+    const { transport, ike, bus } = await setup()
+    const fn = vi.fn()
+    ike.events.on('numericUpdate', fn)
+
+    transport.inject(encode(buildIKENumeric({ mode: IKE_NUMERIC_X1, value: 25 })))
+    expect(fn).toHaveBeenCalledWith({ mode: IKE_NUMERIC_X1, value: 25 })
+    expect(ike.state.numeric?.value).toBe(25)
+
+    await bus.stop()
+  })
+
+  it('captures outbound OBC text broadcasts and accumulates by property ID', async () => {
+    const { transport, ike, bus } = await setup()
+    const fn = vi.fn()
+    ike.events.on('obcTextUpdate', fn)
+
+    transport.inject(
+      encode(buildIKEOBCText({ propertyId: IKE_OBC_PROPERTY.TIME, text: ' 3:43PM' })),
+    )
+    transport.inject(
+      encode(buildIKEOBCText({ propertyId: IKE_OBC_PROPERTY.DATE, text: '05/25/2020' })),
+    )
+
+    expect(fn).toHaveBeenCalledTimes(2)
+    expect(ike.state.obcText[IKE_OBC_PROPERTY.TIME]).toBe(' 3:43PM')
+    expect(ike.state.obcText[IKE_OBC_PROPERTY.DATE]).toBe('05/25/2020')
+
+    await bus.stop()
+  })
+
+  it('captures outbound 0x55 Replicate Data broadcasts', async () => {
+    const { transport, ike, bus } = await setup()
+    const fn = vi.fn()
+    ike.events.on('replicateUpdate', fn)
+
+    transport.inject(
+      encode(
+        buildIKEReplicateData({
+          mileageKm: 243500,
+          tbcRaw: 0x40,
+          fuelLitres: 640,
+          oilRaw: 0,
+          timeDays: 628,
+        }),
+      ),
+    )
+
+    expect(fn).toHaveBeenCalledWith({
+      mileageKm: 243500,
+      tbcRaw: 0x40,
+      fuelLitres: 640,
+      oilRaw: 0,
+      timeDays: 628,
+    })
+    expect(ike.state.replicate?.mileageKm).toBe(243500)
+
+    await bus.stop()
+  })
+
+  it('writeCCMText control emits the right frame', async () => {
+    const { ike, bus } = await setup()
+    ike.mode = 'active'
+    const txFrames = vi.fn()
+    bus.events.on('txFrame', txFrames)
+    await IKEControls.writeCCMText.invoke(ike, { text: 'HELLO' })
+    expect(txFrames).toHaveBeenCalledTimes(1)
+    const sent = txFrames.mock.calls[0]![0]
+    expect(sent.destination).toBe(DEVICE_ADDRESSES.IKE)
+    expect(sent.payload[0]).toBe(0x1a)
+    expect(sent.payload[1]).toBe(0x36) // persist
     await bus.stop()
   })
 })
