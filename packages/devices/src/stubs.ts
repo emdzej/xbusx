@@ -95,8 +95,7 @@ export const SDRS = stub('SDRS', DEVICE_ADDRESSES.SDRS)
 // 0x76 — CD Changer (DIN size)
 export const CDCD = stub('CDCD', DEVICE_ADDRESSES.CDCD)
 
-// 0x7F — Navigation Computer (Europe)
-export const NAV = stub('NAV', DEVICE_ADDRESSES.NAV)
+// 0x7F — Navigation Computer: implemented as a full twin in `nav.ts`.
 
 // 0x9A — Automatic Headlight Vertical Aim Control
 export const ALWR = stub('ALWR', DEVICE_ADDRESSES.ALWR)

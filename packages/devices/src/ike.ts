@@ -1,28 +1,54 @@
 import {
   buildIgnitionRequest,
   buildIKECCMText,
+  buildIKEClusterButton,
+  buildIKEDeviceReset,
+  buildIKELanguageRegionRequest,
   buildIKENumeric,
+  buildIKEOBCRemoteConfig,
+  buildIKEOBCStatus,
+  buildIKERedundantDataRequest,
   buildOdometerRequest,
   buildSensorsRequest,
   buildTemperatureRequest,
+  CMD_DEVICE_RESET,
   CMD_GPS_TIME,
   CMD_IKE_CCM_WRITE_TEXT,
+  CMD_IKE_CLUSTER_BUTTON,
+  CMD_IKE_LANGUAGE_REGION,
+  CMD_IKE_LANGUAGE_REGION_REQUEST,
   CMD_IKE_NUMERIC_WRITE,
+  CMD_IKE_OBC_REMOTE_CONFIG,
+  CMD_IKE_OBC_STATUS,
   CMD_IKE_OBC_TEXT,
+  CMD_IKE_REDUNDANT_DATA,
   CMD_IKE_REPLICATE_DATA,
   type GPSTime,
   type IgnitionState,
   IKE_NUMERIC_CLEAR,
   type IKECCMTextWrite,
+  type IKEClusterButton,
+  type IKEClusterButtonName,
+  type IKEDeviceReset,
+  type IKELanguageRegion,
   type IKENumericMode,
   type IKENumericWrite,
+  type IKEOBCRemoteConfig,
+  type IKEOBCStatus,
   type IKEOBCTextFrame,
+  type IKERedundantData,
   type IKEReplicateData,
   parseGPSTime,
   parseIgnitionStatus,
   parseIKECCMText,
+  parseIKEClusterButton,
+  parseIKEDeviceReset,
+  parseIKELanguageRegion,
   parseIKENumeric,
+  parseIKEOBCRemoteConfig,
+  parseIKEOBCStatus,
   parseIKEOBCText,
+  parseIKERedundantData,
   parseIKEReplicateData,
   parseOdometer,
   parseSensors,
@@ -64,6 +90,18 @@ export interface IKEState {
   replicate: IKEReplicateData | undefined
   /** Most recent `0x1F` GPS time pushed in by the navigation computer. */
   gpsTime: GPSTime | undefined
+  /** Most recent `0x15` language & region broadcast (IKE → broadcast or GT → IKE). */
+  languageRegion: IKELanguageRegion | undefined
+  /** Most recent `0x2A` OBC status broadcast to displays. */
+  obcStatus: IKEOBCStatus | undefined
+  /** Most recent `0x42` remote-control config (IKE ↔ GT). */
+  obcRemoteConfig: IKEOBCRemoteConfig | undefined
+  /** Most recent `0x57` cluster-button broadcast. */
+  lastClusterButton: IKEClusterButton | undefined
+  /** Most recent `0x54` redundant-data response (LCM → IKE). */
+  redundantData: IKERedundantData | undefined
+  /** Most recent `0x1C` device-reset addressed to the IKE. */
+  deviceReset: IKEDeviceReset | undefined
 }
 
 export type IKEEvents = {
@@ -77,6 +115,12 @@ export type IKEEvents = {
   obcTextUpdate: IKEOBCTextFrame
   replicateUpdate: IKEReplicateData
   gpsTimeUpdate: GPSTime
+  languageRegionUpdate: IKELanguageRegion
+  obcStatusUpdate: IKEOBCStatus
+  obcRemoteConfigUpdate: IKEOBCRemoteConfig
+  clusterButton: IKEClusterButton
+  redundantDataUpdate: IKERedundantData
+  deviceReset: IKEDeviceReset
 }
 
 /**
@@ -100,6 +144,12 @@ export class IKE extends Device<IKEState, IKEEvents> {
     obcText: {},
     replicate: undefined,
     gpsTime: undefined,
+    languageRegion: undefined,
+    obcStatus: undefined,
+    obcRemoteConfig: undefined,
+    lastClusterButton: undefined,
+    redundantData: undefined,
+    deviceReset: undefined,
   }
 
   get state(): Readonly<IKEState> {
@@ -166,6 +216,30 @@ export class IKE extends Device<IKEState, IKEEvents> {
         this.events.emit('replicateUpdate', replicate)
         break
       }
+      case CMD_IKE_LANGUAGE_REGION: {
+        const lr = parseIKELanguageRegion(message)
+        this._state = { ...this._state, languageRegion: lr }
+        this.events.emit('languageRegionUpdate', lr)
+        break
+      }
+      case CMD_IKE_OBC_STATUS: {
+        const status = parseIKEOBCStatus(message)
+        this._state = { ...this._state, obcStatus: status }
+        this.events.emit('obcStatusUpdate', status)
+        break
+      }
+      case CMD_IKE_OBC_REMOTE_CONFIG: {
+        const config = parseIKEOBCRemoteConfig(message)
+        this._state = { ...this._state, obcRemoteConfig: config }
+        this.events.emit('obcRemoteConfigUpdate', config)
+        break
+      }
+      case CMD_IKE_CLUSTER_BUTTON: {
+        const btn = parseIKEClusterButton(message)
+        this._state = { ...this._state, lastClusterButton: btn }
+        this.events.emit('clusterButton', btn)
+        break
+      }
     }
   }
 
@@ -192,6 +266,25 @@ export class IKE extends Device<IKEState, IKEEvents> {
         const gpsTime = parseGPSTime(message)
         this._state = { ...this._state, gpsTime }
         this.events.emit('gpsTimeUpdate', gpsTime)
+        break
+      }
+      case CMD_IKE_LANGUAGE_REGION_REQUEST: {
+        // No payload to decode beyond the command byte itself.  Just
+        // surface that someone asked the cluster to re-broadcast its
+        // settings.  Consumers usually want this so they can replay
+        // the matching 0x15 response in active mode.
+        break
+      }
+      case CMD_IKE_REDUNDANT_DATA: {
+        const r = parseIKERedundantData(message)
+        this._state = { ...this._state, redundantData: r }
+        this.events.emit('redundantDataUpdate', r)
+        break
+      }
+      case CMD_DEVICE_RESET: {
+        const reset = parseIKEDeviceReset(message)
+        this._state = { ...this._state, deviceReset: reset }
+        this.events.emit('deviceReset', reset)
         break
       }
     }
@@ -239,6 +332,45 @@ export class IKE extends Device<IKEState, IKEEvents> {
   /** Send a `0x44` clear addressed to the IKE — wipes the low-OBC numeric. */
   async clearNumeric(source = DEVICE_ADDRESSES.PDC): Promise<void> {
     await this.sender.send(buildIKENumeric({ source, mode: IKE_NUMERIC_CLEAR }))
+  }
+
+  /** Send a `0x14` request asking the IKE to re-broadcast its language/region. */
+  async requestLanguageRegion(source = DEVICE_ADDRESSES.DIA): Promise<void> {
+    await this.sender.send(buildIKELanguageRegionRequest({ source }))
+  }
+
+  /**
+   * Broadcast a `0x2A` OBC-status frame as if from the IKE.  Defaults to
+   * "all off"; pass partial flags to set just the bits you care about.
+   */
+  async broadcastOBCStatus(flags: Parameters<typeof buildIKEOBCStatus>[0] = {}): Promise<void> {
+    await this.sender.send(buildIKEOBCStatus({ source: this.address, ...flags }))
+  }
+
+  /** Send a `0x42` OBC remote-control config from IKE → GT. */
+  async sendOBCRemoteConfig(slots: ReadonlyArray<number>): Promise<void> {
+    await this.sender.send(buildIKEOBCRemoteConfig({ source: this.address, slots }))
+  }
+
+  /**
+   * Broadcast a `0x57` cluster button press as if from the IKE.  Defaults
+   * to a press; pass `'release'` for the release frame.
+   */
+  async sendClusterButton(
+    button: IKEClusterButtonName,
+    state: 'press' | 'release' = 'press',
+  ): Promise<void> {
+    await this.sender.send(buildIKEClusterButton({ source: this.address, button, state }))
+  }
+
+  /** Send a `0x53` redundant-data request to the LCM. */
+  async requestRedundantData(destination = DEVICE_ADDRESSES.LCM): Promise<void> {
+    await this.sender.send(buildIKERedundantDataRequest({ source: this.address, destination }))
+  }
+
+  /** Send a `0x1C` device-reset broadcast (defaults to the canonical `[0x1C, 0x00]`). */
+  async sendDeviceReset(): Promise<void> {
+    await this.sender.send(buildIKEDeviceReset({ source: this.address }))
   }
 }
 
@@ -303,5 +435,54 @@ export const IKEControls = {
     requires: 'active',
     params: {},
     invoke: async (d: IKE, _args: object) => d.clearNumeric(),
+  },
+  requestLanguageRegion: {
+    label: 'Request language & region',
+    description: 'Asks the IKE to re-broadcast its 0x15 language/region settings.',
+    params: {},
+    invoke: async (d: IKE, _args: object) => d.requestLanguageRegion(),
+  },
+  requestRedundantData: {
+    label: 'Request LCM redundant data',
+    description: 'IKE → LCM 0x53 request for VIN + mileage + SII data.',
+    params: {},
+    invoke: async (d: IKE, _args: object) => d.requestRedundantData(),
+  },
+  sendCheckButton: {
+    label: 'Send CHECK button press',
+    description: 'Broadcasts a 0x57 CHECK button press as if from the cluster.',
+    requires: 'active',
+    params: {
+      state: {
+        kind: 'enum',
+        values: ['press', 'release'] as const,
+        label: 'Press/release',
+        default: 'press',
+      },
+    },
+    invoke: async (d: IKE, args: { state: 'press' | 'release' }) =>
+      d.sendClusterButton('CHECK', args.state),
+  },
+  sendStalkBC: {
+    label: 'Send BC stalk button',
+    description: 'Broadcasts a 0x57 BC stalk button press from the cluster.',
+    requires: 'active',
+    params: {
+      state: {
+        kind: 'enum',
+        values: ['press', 'release'] as const,
+        label: 'Press/release',
+        default: 'press',
+      },
+    },
+    invoke: async (d: IKE, args: { state: 'press' | 'release' }) =>
+      d.sendClusterButton('STALK_BC', args.state),
+  },
+  sendDeviceReset: {
+    label: 'Broadcast device reset',
+    description: 'Send the navcoder-canonical 0x1C 0x00 "device reset" broadcast.',
+    requires: 'active',
+    params: {},
+    invoke: async (d: IKE, _args: object) => d.sendDeviceReset(),
   },
 } as const satisfies ControlsManifest<IKE>

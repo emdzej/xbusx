@@ -45,6 +45,7 @@ import {
   MRS,
   NAJ,
   NAV,
+  NAVControls,
   PDC,
   PDCControls,
   RAD,
@@ -99,6 +100,7 @@ export const DEVICE_REGISTRY: readonly DeviceEntry[] = [
   { name: 'PDC', implemented: true, create: () => new PDC(), controls: PDCControls },
   { name: 'RLS', implemented: true, create: () => new RLS(), controls: RLSControls },
   { name: 'EWS', implemented: true, create: () => new EWS(), controls: EWSControls },
+  { name: 'NAV', implemented: true, create: () => new NAV(), controls: NAVControls },
 
   { name: 'SHD', implemented: false, create: () => new SHD(), controls: EMPTY_CONTROLS },
   { name: 'HKM', implemented: false, create: () => new HKM(), controls: EMPTY_CONTROLS },
@@ -123,7 +125,6 @@ export const DEVICE_REGISTRY: readonly DeviceEntry[] = [
   { name: 'SM', implemented: false, create: () => new SM(), controls: EMPTY_CONTROLS },
   { name: 'SDRS', implemented: false, create: () => new SDRS(), controls: EMPTY_CONTROLS },
   { name: 'CDCD', implemented: false, create: () => new CDCD(), controls: EMPTY_CONTROLS },
-  { name: 'NAV', implemented: false, create: () => new NAV(), controls: EMPTY_CONTROLS },
   { name: 'ALWR', implemented: false, create: () => new ALWR(), controls: EMPTY_CONTROLS },
   { name: 'CVM', implemented: false, create: () => new CVM(), controls: EMPTY_CONTROLS },
   { name: 'ETS', implemented: false, create: () => new ETS(), controls: EMPTY_CONTROLS },

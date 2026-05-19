@@ -2,16 +2,26 @@ import {
   type BMBTButtonState,
   type BMBTHardButton,
   type BMBTHardButtonEvent,
+  type BMBTServiceReply,
+  type BMBTServiceRequest,
   type BMBTSoftButton,
   type BMBTSoftButtonEvent,
+  type BMBTTapeLedControl,
   buildBMBTHardButton,
+  buildBMBTServiceReply,
   buildBMBTSoftButton,
   buildNavDial,
   buildVolume,
+  CMD_BMBT_SERVICE_REPLY,
+  CMD_BMBT_SERVICE_REQUEST,
+  CMD_BMBT_TAPE_LED_CONTROL,
   type NavDialDirection,
   type NavDialEvent,
   parseBMBTHardButton,
+  parseBMBTServiceReply,
+  parseBMBTServiceRequest,
   parseBMBTSoftButton,
+  parseBMBTTapeLedControl,
   parseNavDial,
 } from '@emdzej/ibusx-commands'
 import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
@@ -25,6 +35,12 @@ export interface BMBTState {
   lastHardButton: BMBTHardButtonEvent | undefined
   lastSoftButton: BMBTSoftButtonEvent | undefined
   lastNavDial: NavDialEvent | undefined
+  /** Most recent inbound `0x05` Service-Mode request from the GT. */
+  lastServiceRequest: BMBTServiceRequest | undefined
+  /** Most recent outbound `0x06` Service-Mode reply from the BMBT. */
+  lastServiceReply: BMBTServiceReply | undefined
+  /** Most recent inbound `0x4A` Tape/LED control from the radio. */
+  lastTapeLedControl: BMBTTapeLedControl | undefined
 }
 
 export type BMBTEvents = {
@@ -32,6 +48,9 @@ export type BMBTEvents = {
   softButton: BMBTSoftButtonEvent
   navDial: NavDialEvent
   buttonSent: { button: BMBTHardButton | BMBTSoftButton; state: BMBTButtonState }
+  serviceRequest: BMBTServiceRequest
+  serviceReply: BMBTServiceReply
+  tapeLedControl: BMBTTapeLedControl
 }
 
 /**
@@ -46,27 +65,68 @@ export class BMBT extends Device<BMBTState, BMBTEvents> {
     lastHardButton: undefined,
     lastSoftButton: undefined,
     lastNavDial: undefined,
+    lastServiceRequest: undefined,
+    lastServiceReply: undefined,
+    lastTapeLedControl: undefined,
   }
   get state(): Readonly<BMBTState> {
     return this._state
   }
 
   handle(message: IBusMessage): void {
-    if (message.source !== this.address) return
     if (message.payload.length < 1) return
+    if (message.source === this.address) {
+      this.handleOutbound(message)
+    } else if (message.destination === this.address) {
+      this.handleInbound(message)
+    }
+  }
+
+  private handleOutbound(message: IBusMessage): void {
     const cmd = message.payload[0]
-    if (cmd === CMD_HARD_BUTTONS) {
-      const evt = parseBMBTHardButton(message)
-      this._state = { ...this._state, lastHardButton: evt }
-      this.events.emit('hardButton', evt)
-    } else if (cmd === CMD_SOFT_BUTTONS) {
-      const evt = parseBMBTSoftButton(message)
-      this._state = { ...this._state, lastSoftButton: evt }
-      this.events.emit('softButton', evt)
-    } else if (cmd === CMD_NAV_DIAL) {
-      const evt = parseNavDial(message)
-      this._state = { ...this._state, lastNavDial: evt }
-      this.events.emit('navDial', evt)
+    switch (cmd) {
+      case CMD_HARD_BUTTONS: {
+        const evt = parseBMBTHardButton(message)
+        this._state = { ...this._state, lastHardButton: evt }
+        this.events.emit('hardButton', evt)
+        break
+      }
+      case CMD_SOFT_BUTTONS: {
+        const evt = parseBMBTSoftButton(message)
+        this._state = { ...this._state, lastSoftButton: evt }
+        this.events.emit('softButton', evt)
+        break
+      }
+      case CMD_NAV_DIAL: {
+        const evt = parseNavDial(message)
+        this._state = { ...this._state, lastNavDial: evt }
+        this.events.emit('navDial', evt)
+        break
+      }
+      case CMD_BMBT_SERVICE_REPLY: {
+        const reply = parseBMBTServiceReply(message)
+        this._state = { ...this._state, lastServiceReply: reply }
+        this.events.emit('serviceReply', reply)
+        break
+      }
+    }
+  }
+
+  private handleInbound(message: IBusMessage): void {
+    const cmd = message.payload[0]
+    switch (cmd) {
+      case CMD_BMBT_SERVICE_REQUEST: {
+        const req = parseBMBTServiceRequest(message)
+        this._state = { ...this._state, lastServiceRequest: req }
+        this.events.emit('serviceRequest', req)
+        break
+      }
+      case CMD_BMBT_TAPE_LED_CONTROL: {
+        const tape = parseBMBTTapeLedControl(message)
+        this._state = { ...this._state, lastTapeLedControl: tape }
+        this.events.emit('tapeLedControl', tape)
+        break
+      }
     }
   }
 
@@ -86,6 +146,11 @@ export class BMBT extends Device<BMBTState, BMBTEvents> {
 
   async changeVolume(direction: 'UP' | 'DOWN', steps = 1): Promise<void> {
     await this.sender.send(buildVolume({ source: this.address, direction, steps }))
+  }
+
+  /** Reply to a Service-Mode request as if from the BMBT. */
+  async sendServiceReply(data: ReadonlyArray<number> | Uint8Array): Promise<void> {
+    await this.sender.send(buildBMBTServiceReply({ source: this.address, data }))
   }
 }
 
