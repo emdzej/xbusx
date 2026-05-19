@@ -129,6 +129,47 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
+  packages/dbus-commands:
+    dependencies:
+      '@emdzej/dbus-protocol':
+        specifier: workspace:*
+        version: link:../dbus-protocol
+    devDependencies:
+      '@emdzej/ibusx-tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.6
+        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
+
+  packages/dbus-devices:
+    dependencies:
+      '@emdzej/dbus-commands':
+        specifier: workspace:*
+        version: link:../dbus-commands
+      '@emdzej/dbus-protocol':
+        specifier: workspace:*
+        version: link:../dbus-protocol
+      '@emdzej/ibusx-core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@emdzej/ibusx-tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@types/node':
+        specifier: ^25.8.0
+        version: 25.8.0
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.6
+        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
+
   packages/dbus-protocol:
     devDependencies:
       '@emdzej/ibusx-tsconfig':
