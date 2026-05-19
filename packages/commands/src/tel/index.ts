@@ -1,4 +1,5 @@
 export * from './body-text.js'
+export * from './direct-dial.js'
 export * from './led.js'
 export * from './menu-text.js'
 export * from './sms-icon.js'
