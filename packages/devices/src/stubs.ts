@@ -16,7 +16,10 @@ abstract class StubDevice extends Device<object, EventMap> {
   }
 }
 
-function stub(name: string, address: DeviceAddress): typeof StubDevice {
+// Concrete `new (): StubDevice` shape — the inner class is concrete even
+// though `StubDevice` itself is abstract.  Returning `typeof StubDevice`
+// would propagate the abstract-ness and block `new` in callers.
+function stub(name: string, address: DeviceAddress): new () => StubDevice {
   return class extends StubDevice {
     readonly address = address
     readonly name = name

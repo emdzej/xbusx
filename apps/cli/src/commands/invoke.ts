@@ -20,7 +20,9 @@ export function registerInvokeCommand(program: Command): void {
     .option('-b, --baud <rate>', 'Baud rate', '9600')
     .option('--active', 'Arm active-mode controls (refused by default for safety)')
 
-  for (const entry of DEVICE_REGISTRY) {
+  // Stubs have empty manifests — skip them so `ibusx invoke --help` doesn't
+  // list 40 inert subcommands.
+  for (const entry of DEVICE_REGISTRY.filter((e) => e.implemented)) {
     const deviceCmd = invoke
       .command(entry.name)
       .description(`Controls on ${entry.name}`)

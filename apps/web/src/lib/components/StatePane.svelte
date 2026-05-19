@@ -7,10 +7,16 @@ interface Props {
   device: Device<any, any>
   entry: DeviceEntry
   active: boolean
+  /**
+   * Bumped by App.svelte on every device event.  Touched inside the
+   * `stateEntries` derived so that mutations to `device.state` (which are
+   * plain class-field writes Svelte can't track) trigger a re-evaluation.
+   */
+  stateTick: number
   onInvoke: (controlName: string, args: Record<string, unknown>) => void | Promise<void>
 }
 
-let { device, entry, active, onInvoke }: Props = $props()
+let { device, entry, active, stateTick, onInvoke }: Props = $props()
 
 let argValues = $state<Record<string, Record<string, string>>>({})
 
@@ -66,7 +72,10 @@ function setArg(controlName: string, paramName: string, value: string): void {
   }
 }
 
-let stateEntries = $derived(Object.entries(device.state as Record<string, unknown>))
+let stateEntries = $derived.by(() => {
+  void stateTick
+  return Object.entries(device.state as Record<string, unknown>)
+})
 let controlEntries = $derived(Object.entries(entry.controls))
 </script>
 

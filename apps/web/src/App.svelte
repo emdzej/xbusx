@@ -126,11 +126,9 @@ function appendLog(arr: LogEntry[], entry: LogEntry): LogEntry[] {
   return next
 }
 
-// stateTick exists purely to force re-render of components reading device.state.
-// Reference it here so the compiler sees a dependency.
-$effect(() => {
-  void stateTick
-})
+// stateTick is passed down into StatePane (as a prop) so its `$derived`
+// re-evaluates whenever a device fires an event — Svelte 5 can't see
+// the plain class-field writes inside Device subclasses.
 
 let currentEntry = $derived(
   connection !== undefined ? connection.entries[selectedDeviceIndex] : undefined,
@@ -169,6 +167,7 @@ let currentDevice = $derived(
           device={currentDevice}
           entry={currentEntry}
           active={config.active}
+          {stateTick}
           onInvoke={(name, args) =>
             currentDevice && currentEntry && invokeControl(currentDevice, currentEntry, name, args)}
         />

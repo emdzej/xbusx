@@ -108,6 +108,7 @@ export function App({ bus, port, entries, devices }: AppProps): ReactElement {
     <Box flexDirection="column">
       <Box>
         <DeviceList
+          entries={entries}
           devices={devices}
           selectedIndex={selectedDevice}
           focused={focus === 'devices'}

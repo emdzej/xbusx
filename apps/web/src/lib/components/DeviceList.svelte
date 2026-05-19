@@ -18,7 +18,9 @@ let { entries, devices, selectedIndex, onSelect }: Props = $props()
     <li>
       <button
         class:selected={i === selectedIndex}
+        class:stub={!entry.implemented}
         onclick={() => onSelect(i)}
+        title={entry.implemented ? entry.name : `${entry.name} (stub — no decoded state)`}
       >
         <span class="name">{entry.name}</span>
         <span class="addr">0x{devices[i]?.address.toString(16).padStart(2, '0').toUpperCase()}</span>
@@ -74,6 +76,15 @@ let { entries, devices, selectedIndex, onSelect }: Props = $props()
   }
 
   button.selected .addr {
+    color: var(--accent);
+  }
+
+  button.stub .name {
+    color: var(--fg-muted);
+    font-weight: 400;
+  }
+
+  button.stub.selected .name {
     color: var(--accent);
   }
 </style>

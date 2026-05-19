@@ -10,7 +10,7 @@ export function registerListDevicesCommand(program: Command): void {
       'List every known I/K-bus device address and which ones have a full twin implementation.',
     )
     .action(() => {
-      const implemented = new Set(DEVICE_REGISTRY.map((e) => e.name))
+      const implemented = new Set(DEVICE_REGISTRY.filter((e) => e.implemented).map((e) => e.name))
       const entries = Object.entries(DEVICE_ADDRESSES) as [string, number][]
       entries.sort((a, b) => a[1] - b[1])
 
