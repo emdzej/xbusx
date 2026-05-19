@@ -17,23 +17,23 @@ Last refreshed: 2026-05-19.
 
 | Status | Count |
 |---|---:|
-| **Implemented** in `packages/commands/src/` | 47 |
-| **Known to exist in navcoder** but not yet covered | 66 |
+| **Implemented** in `packages/commands/src/` | 53 |
+| **Known to exist in navcoder** but not yet covered | 60 |
 | **Total navcoder I/K-bus command-name table** | 112 — *one byte (`0x1B`) appears twice as both `IKE text status` and `PDC sensor request` in different parsers; the union is 112 distinct meanings on 112 bytes.* |
 
-## Implemented (47 bytes)
+## Implemented (53 bytes)
 
 `0x01`, `0x02`, `0x05`, `0x06`, `0x07`, `0x0C`, `0x10`, `0x11`, `0x12`,
 `0x13`, `0x16`, `0x17`, `0x18`, `0x19`, `0x1A`, `0x1B`, `0x1D`, `0x1F`,
-`0x23`, `0x24`, `0x2B`, `0x2C`, `0x31`, `0x32`, `0x38`, `0x39`, `0x3B`,
-`0x40`, `0x41`, `0x44`, `0x45`, `0x46`, `0x47`, `0x48`, `0x49`, `0x4F`,
-`0x55`, `0x59`, `0x5A`, `0x5B`, `0x72`, `0x73`, `0x74`, `0x76`, `0x79`,
-`0x7A`, `0xA0`.
+`0x20`, `0x21`, `0x23`, `0x24`, `0x2A`, `0x2B`, `0x2C`, `0x31`, `0x32`,
+`0x38`, `0x39`, `0x3B`, `0x40`, `0x41`, `0x42`, `0x44`, `0x45`, `0x46`,
+`0x47`, `0x48`, `0x49`, `0x4F`, `0x55`, `0x59`, `0x5A`, `0x5B`, `0x72`,
+`0x73`, `0x74`, `0x76`, `0x79`, `0x7A`, `0xA0`, `0xA5`, `0xA6`.
 
 For each, see the constant `CMD_*` in the corresponding
 `packages/commands/src/<device>/<command>.ts`.
 
-## Gap — 66 command bytes navcoder names but we don't yet decode
+## Gap — 60 command bytes navcoder names but we don't yet decode
 
 Grouped by likely device / subsystem. Names are taken verbatim from
 navcoder's table. **Priority** is an editorial guess — `high` means
@@ -119,19 +119,22 @@ Lives under `packages/commands/src/nav/` since NAV is the broadcaster.
 
 | Byte | Name | Priority | Note |
 |---:|---|---|---|
-| `0x20` | Display status | mid | |
-| `0x21` | Menu Text | mid | |
-| `0x22` | Text display confirmation | mid | |
-| `0x27` | MID display request | mid | |
-| `0x28` | MID denied access | low | |
-| `0x29` | Report MID display | mid | |
-| `0x2A` | On-board computer special indicators | mid | |
-| `0x42` | On-board computer scroll | low | Companion to our `0x40`/`0x41`. |
-| `0x43` | Mono display | low | |
-| `0x52` | Text Display Update | mid | |
-| `0x5F` | Info swap | mid | |
-| `0xA5` | Screen Text | mid | |
-| `0xA6` | Special indicators | mid | |
+| `0x22` | Text display confirmation | mid | BlueBus has `IBUS_CMD_GT_MENU_BUFFER_STATUS` as a constant but no byte-layout parser; only fires an event on receipt.  Not in Wilhelm.  **Held — no concrete spec.** |
+| `0x27` | MID display request | mid | BlueBus has `IBUS_MID_CMD_SET_MODE` as a constant but no byte-layout parser; not in Wilhelm.  **Held — no concrete spec.** |
+| `0x28` | MID denied access | low | Not in BlueBus or Wilhelm.  **Held — no concrete spec.** |
+| `0x29` | Report MID display | mid | Not in BlueBus or Wilhelm.  **Held — no concrete spec.** |
+| `0x43` | Mono display | low | Not in BlueBus or Wilhelm.  **Held — no concrete spec.** |
+| `0x52` | Text Display Update | mid | Not in BlueBus or Wilhelm.  **Held — no concrete spec.** |
+| `0x5F` | Info swap | mid | Not in BlueBus or Wilhelm.  **Held — no concrete spec.** |
+
+*Implemented in Batch 3 (2026-05-19):*
+`0x20` GT Menu Select (Wilhelm `telephone/20.md` — GT broadcasts when user picks a main-menu item;
+only the Telephone selection is fully documented),
+`0x21` TEL Menu Text (Wilhelm `telephone/21.md` — TEL → GT/MID; layout/function/options bitfield + null-terminated string with `0x06` LF separators),
+`0x2A` IKE OBC Status (Wilhelm `ike/2a.md` — IKE → displays multicast; two-byte bitfield for memo/timer/limit/code/aux*),
+`0x42` IKE OBC Remote Config (Wilhelm `ike/42.md` — fixed 12-slot function table; IKE ↔ GT for edit/memorise of recall functions),
+`0xA5` TEL Body Text (Wilhelm `telephone/a5.md` — TEL → GT; like `0x21` but with character offset for breaking long lines),
+`0xA6` TEL SMS Icon (Wilhelm `telephone/a6.md` — TEL → displays multicast; show/hide unread-SMS icon).
 
 ### Navigation / TMC
 
