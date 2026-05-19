@@ -1,6 +1,6 @@
 import { IKBus, Vehicle } from '@emdzej/ibusx-core'
 import { addressName, type IKBusMessage } from '@emdzej/ikbus-protocol'
-import { SerialTransport } from '@emdzej/ikbus-transport-serial'
+import { SerialTransport } from '@emdzej/transport-serial'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { registerAll } from '../registry.js'

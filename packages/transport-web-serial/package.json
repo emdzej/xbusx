@@ -1,5 +1,5 @@
 {
-  "name": "@emdzej/ikbus-transport-serial",
+  "name": "@emdzej/transport-web-serial",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -23,13 +23,11 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
-    "@emdzej/ibusx-core": "workspace:*",
-    "@emdzej/ikbus-protocol": "workspace:*",
-    "serialport": "^13.0.0"
+    "@emdzej/ibusx-core": "workspace:*"
   },
   "devDependencies": {
     "@emdzej/ibusx-tsconfig": "workspace:*",
-    "@types/node": "^25.8.0",
+    "@types/w3c-web-serial": "^1.0.8",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   }

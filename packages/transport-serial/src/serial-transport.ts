@@ -4,25 +4,31 @@ import {
   TransportNotOpenError,
   TypedEmitter,
 } from '@emdzej/ibusx-core'
-import { IBUS_BAUD_RATE } from '@emdzej/ikbus-protocol'
 import { SerialPort } from 'serialport'
+
+/** Default baud rate. 9600 is shared by BMW I/K-bus and D-bus (DS2). */
+const DEFAULT_BAUD_RATE = 9600
 
 export interface SerialTransportOptions {
   /** OS path to the serial device, e.g. `/dev/ttyUSB0` (Mac/Linux) or `COM3` (Windows). */
   path: string
-  /** Baud rate.  Defaults to 9600 (`IBUS_BAUD_RATE`). */
+  /** Baud rate. Defaults to 9600 (BMW I/K-bus and D-bus wire rate). */
   baudRate?: number
-  /** Data bits.  Defaults to 8. */
+  /** Data bits. Defaults to 8. */
   dataBits?: 5 | 6 | 7 | 8
-  /** Parity.  Defaults to `'even'` (BMW I/K-bus standard). */
+  /** Parity. Defaults to `'even'` (BMW I/K-bus and D-bus standard). */
   parity?: 'none' | 'even' | 'odd'
-  /** Stop bits.  Defaults to 1. */
+  /** Stop bits. Defaults to 1. */
   stopBits?: 1 | 1.5 | 2
 }
 
 /**
- * Serial transport using Node's `serialport` package.  Defaults match the
- * BMW I/K-bus wire format (9600 8E1).
+ * Byte-level serial transport using Node's `serialport` package.
+ *
+ * Bus-agnostic: emits raw `data` chunks and accepts `write(bytes)`. Pair
+ * with `IKBus` (`@emdzej/ibusx-core`) for I/K-bus framing, or with `DBus`
+ * (`@emdzej/dbus-devices`) for D-bus (DS2) framing. Defaults match the
+ * 9600 8E1 wire format shared by both buses on BMW chassis.
  */
 export class SerialTransport implements Transport {
   readonly events: TypedEmitter<TransportEvents>
@@ -34,7 +40,7 @@ export class SerialTransport implements Transport {
     this.events = new TypedEmitter<TransportEvents>()
     this.options = {
       path: options.path,
-      baudRate: options.baudRate ?? IBUS_BAUD_RATE,
+      baudRate: options.baudRate ?? DEFAULT_BAUD_RATE,
       dataBits: options.dataBits ?? 8,
       parity: options.parity ?? 'even',
       stopBits: options.stopBits ?? 1,

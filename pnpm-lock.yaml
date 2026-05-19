@@ -32,9 +32,9 @@ importers:
       '@emdzej/ikbus-protocol':
         specifier: workspace:*
         version: link:../../packages/ikbus-protocol
-      '@emdzej/ikbus-transport-serial':
+      '@emdzej/transport-serial':
         specifier: workspace:*
-        version: link:../../packages/ikbus-transport-serial
+        version: link:../../packages/transport-serial
       '@inkjs/ui':
         specifier: ^2.0.0
         version: 2.0.0(ink@7.0.3(@types/react@19.2.14)(react@19.2.6))
@@ -84,9 +84,9 @@ importers:
       '@emdzej/ikbus-protocol':
         specifier: workspace:*
         version: link:../../packages/ikbus-protocol
-      '@emdzej/ikbus-transport-web-serial':
+      '@emdzej/transport-web-serial':
         specifier: workspace:*
-        version: link:../../packages/ikbus-transport-web-serial
+        version: link:../../packages/transport-web-serial
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*
@@ -235,14 +235,11 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
-  packages/ikbus-transport-serial:
+  packages/transport-serial:
     dependencies:
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../core
-      '@emdzej/ikbus-protocol':
-        specifier: workspace:*
-        version: link:../ikbus-protocol
       serialport:
         specifier: ^13.0.0
         version: 13.0.0
@@ -260,14 +257,11 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0))
 
-  packages/ikbus-transport-web-serial:
+  packages/transport-web-serial:
     dependencies:
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../core
-      '@emdzej/ikbus-protocol':
-        specifier: workspace:*
-        version: link:../ikbus-protocol
     devDependencies:
       '@emdzej/ibusx-tsconfig':
         specifier: workspace:*

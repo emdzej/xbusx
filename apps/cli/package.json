@@ -23,7 +23,7 @@
     "@emdzej/ibusx-core": "workspace:*",
     "@emdzej/ikbus-devices": "workspace:*",
     "@emdzej/ikbus-protocol": "workspace:*",
-    "@emdzej/ikbus-transport-serial": "workspace:*",
+    "@emdzej/transport-serial": "workspace:*",
     "@inkjs/ui": "^2.0.0",
     "commander": "^14.0.3",
     "ink": "^7.0.3",

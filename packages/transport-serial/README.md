@@ -1,4 +1,4 @@
-# @emdzej/ikbus-transport-serial
+# @emdzej/transport-serial
 
 Node-side serial transport for `@emdzej/ibusx-core`.  Wraps [`serialport`](https://serialport.io) v13 with the I/K-bus defaults (9600 baud, 8 data bits, even parity, 1 stop bit) and exposes the `Transport` interface that `IKBus` consumes.
 
@@ -6,7 +6,7 @@ Node-side serial transport for `@emdzej/ibusx-core`.  Wraps [`serialport`](https
 
 ```ts
 import { IKBus, Vehicle } from '@emdzej/ibusx-core'
-import { SerialTransport, listSerialPorts } from '@emdzej/ikbus-transport-serial'
+import { SerialTransport, listSerialPorts } from '@emdzej/transport-serial'
 
 console.log(await listSerialPorts())
 // → [ { path: '/dev/ttyUSB0', manufacturer: 'FTDI', ... }, ... ]

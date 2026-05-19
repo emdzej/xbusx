@@ -15,7 +15,7 @@
     "@emdzej/ibusx-core": "workspace:*",
     "@emdzej/ikbus-devices": "workspace:*",
     "@emdzej/ikbus-protocol": "workspace:*",
-    "@emdzej/ikbus-transport-web-serial": "workspace:*"
+    "@emdzej/transport-web-serial": "workspace:*"
   },
   "devDependencies": {
     "@emdzej/ibusx-tsconfig": "workspace:*",

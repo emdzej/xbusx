@@ -1,6 +1,6 @@
 import type { ControlDescriptor, ControlParam, Device } from '@emdzej/ibusx-core'
 import { IKBus, Vehicle } from '@emdzej/ibusx-core'
-import { SerialTransport } from '@emdzej/ikbus-transport-serial'
+import { SerialTransport } from '@emdzej/transport-serial'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { ArgValidationError, coerceArg } from '../coerce.js'

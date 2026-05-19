@@ -1,16 +1,11 @@
 import { TransportNotOpenError } from '@emdzej/ibusx-core'
-import { IBUS_BAUD_RATE } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { SerialTransport } from '../src/serial-transport.js'
 
 describe('SerialTransport', () => {
-  it('constructs with the I/K-bus defaults (9600 8E1)', () => {
+  it('constructs without opening the port', () => {
     const t = new SerialTransport({ path: '/dev/null-test' })
     expect(t.isOpen).toBe(false)
-    // We can't easily inspect internal options without opening; just assert
-    // the public-facing state.  The IBUS_BAUD_RATE constant matches what
-    // SerialTransport defaults to internally.
-    expect(IBUS_BAUD_RATE).toBe(9600)
   })
 
   it('rejects writes when the port is not open', async () => {

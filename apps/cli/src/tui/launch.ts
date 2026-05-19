@@ -1,5 +1,5 @@
 import { IKBus, Vehicle } from '@emdzej/ibusx-core'
-import { SerialTransport } from '@emdzej/ikbus-transport-serial'
+import { SerialTransport } from '@emdzej/transport-serial'
 import { render } from 'ink'
 import { createElement } from 'react'
 import { registerAll } from '../registry.js'

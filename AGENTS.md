@@ -38,8 +38,8 @@ packages/
   commands/                           # @emdzej/ikbus-commands  — per-command codecs (parseX / buildX)
   core/                               # @emdzej/ibusx-core      — IKBus, Vehicle, Device, TypedEmitter, MemoryTransport
   devices/                            # @emdzej/ikbus-devices   — typed device twins + stubs.ts (~40 placeholders)
-  transport-serial/                   # @emdzej/ikbus-transport-serial      — Node serialport adapter
-  transport-web-serial/               # @emdzej/ikbus-transport-web-serial  — browser Web Serial adapter
+  transport-serial/                   # @emdzej/transport-serial      — Node serialport adapter
+  transport-web-serial/               # @emdzej/transport-web-serial  — browser Web Serial adapter
 
 apps/
   cli/                                # @emdzej/ibusx-cli       — single `ibusx` bin (Commander + Ink TUI embedded)

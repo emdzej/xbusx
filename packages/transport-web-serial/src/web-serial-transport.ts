@@ -4,32 +4,39 @@ import {
   TransportNotOpenError,
   TypedEmitter,
 } from '@emdzej/ibusx-core'
-import { IBUS_BAUD_RATE } from '@emdzej/ikbus-protocol'
+
+/** Default baud rate. 9600 is shared by BMW I/K-bus and D-bus (DS2). */
+const DEFAULT_BAUD_RATE = 9600
 
 export interface WebSerialTransportOptions {
   /**
-   * An already-`requestPort()`-ed `SerialPort`.  The caller is responsible for
+   * An already-`requestPort()`-ed `SerialPort`. The caller is responsible for
    * calling `navigator.serial.requestPort()` inside a user gesture (a click
    * handler); we open it here.
    */
   port: SerialPort
-  /** Baud rate.  Defaults to 9600 (`IBUS_BAUD_RATE`). */
+  /** Baud rate. Defaults to 9600 (BMW I/K-bus and D-bus wire rate). */
   baudRate?: number
-  /** Data bits.  Defaults to 8. */
+  /** Data bits. Defaults to 8. */
   dataBits?: 7 | 8
-  /** Parity.  Defaults to `'even'` (BMW I/K-bus standard). */
+  /** Parity. Defaults to `'even'` (BMW I/K-bus and D-bus standard). */
   parity?: 'none' | 'even' | 'odd'
-  /** Stop bits.  Defaults to 1. */
+  /** Stop bits. Defaults to 1. */
   stopBits?: 1 | 2
-  /** Read buffer.  Defaults to 1024 bytes. */
+  /** Read buffer. Defaults to 1024 bytes. */
   bufferSize?: number
 }
 
 /**
- * Web Serial transport.  Browser-only — requires a Chromium-based browser
- * over HTTPS or `localhost`.  The caller passes an already-`requestPort()`-ed
- * `SerialPort` so the request happens inside the user gesture that triggered
- * the connection.
+ * Byte-level Web Serial transport. Browser-only — requires a Chromium-based
+ * browser over HTTPS or `localhost`. The caller passes an already-
+ * `requestPort()`-ed `SerialPort` so the request happens inside the user
+ * gesture that triggered the connection.
+ *
+ * Bus-agnostic: emits raw `data` chunks and accepts `write(bytes)`. Pair
+ * with `IKBus` (`@emdzej/ibusx-core`) for I/K-bus framing, or with `DBus`
+ * (`@emdzej/dbus-devices`) for D-bus (DS2) framing. Defaults match the
+ * 9600 8E1 wire format shared by both buses on BMW chassis.
  *
  * Teardown follows the WICG-recommended pattern: cancel the active reader so
  * the in-flight `read()` resolves with `done: true`, release the lock, then
@@ -49,7 +56,7 @@ export class WebSerialTransport implements Transport {
     this.port = options.port
     this.options = {
       port: options.port,
-      baudRate: options.baudRate ?? IBUS_BAUD_RATE,
+      baudRate: options.baudRate ?? DEFAULT_BAUD_RATE,
       dataBits: options.dataBits ?? 8,
       parity: options.parity ?? 'even',
       stopBits: options.stopBits ?? 1,

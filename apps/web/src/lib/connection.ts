@@ -1,7 +1,7 @@
 import type { Device, IKBus } from '@emdzej/ibusx-core'
 import { IKBus as IBusImpl, Vehicle } from '@emdzej/ibusx-core'
 import { addressName } from '@emdzej/ikbus-protocol'
-import { WebSerialTransport } from '@emdzej/ikbus-transport-web-serial'
+import { WebSerialTransport } from '@emdzej/transport-web-serial'
 import { type LogEntry, nextLogId } from './log.js'
 import { type DeviceEntry, registerAll } from './registry.js'
 
