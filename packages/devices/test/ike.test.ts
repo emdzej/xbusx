@@ -1,4 +1,5 @@
 import {
+  buildGPSTime,
   buildIgnitionStatus,
   buildIKECCMText,
   buildIKENumeric,
@@ -162,6 +163,27 @@ describe('IKE twin', () => {
       timeDays: 628,
     })
     expect(ike.state.replicate?.mileageKm).toBe(243500)
+
+    await bus.stop()
+  })
+
+  it('captures inbound 0x1F GPS time pushes from the nav computer', async () => {
+    const { transport, ike, bus } = await setup()
+    const fn = vi.fn()
+    ike.events.on('gpsTimeUpdate', fn)
+
+    transport.inject(encode(buildGPSTime({ hour: 10, minute: 18, day: 27, month: 1, year: 2019 })))
+
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(ike.state.gpsTime).toEqual({
+      hour: 10,
+      minute: 18,
+      day: 27,
+      month: 1,
+      year: 2019,
+      flagsRaw: 0x40,
+      unknownRaw: 0x00,
+    })
 
     await bus.stop()
   })

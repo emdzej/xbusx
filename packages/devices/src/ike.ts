@@ -5,10 +5,12 @@ import {
   buildOdometerRequest,
   buildSensorsRequest,
   buildTemperatureRequest,
+  CMD_GPS_TIME,
   CMD_IKE_CCM_WRITE_TEXT,
   CMD_IKE_NUMERIC_WRITE,
   CMD_IKE_OBC_TEXT,
   CMD_IKE_REPLICATE_DATA,
+  type GPSTime,
   type IgnitionState,
   IKE_NUMERIC_CLEAR,
   type IKECCMTextWrite,
@@ -16,6 +18,7 @@ import {
   type IKENumericWrite,
   type IKEOBCTextFrame,
   type IKEReplicateData,
+  parseGPSTime,
   parseIgnitionStatus,
   parseIKECCMText,
   parseIKENumeric,
@@ -59,6 +62,8 @@ export interface IKEState {
   obcText: Record<number, string>
   /** Most recent `0x55` Replicate-Data broadcast (IKE → LCM). */
   replicate: IKEReplicateData | undefined
+  /** Most recent `0x1F` GPS time pushed in by the navigation computer. */
+  gpsTime: GPSTime | undefined
 }
 
 export type IKEEvents = {
@@ -71,6 +76,7 @@ export type IKEEvents = {
   numericUpdate: IKENumericWrite
   obcTextUpdate: IKEOBCTextFrame
   replicateUpdate: IKEReplicateData
+  gpsTimeUpdate: GPSTime
 }
 
 /**
@@ -93,6 +99,7 @@ export class IKE extends Device<IKEState, IKEEvents> {
     numeric: undefined,
     obcText: {},
     replicate: undefined,
+    gpsTime: undefined,
   }
 
   get state(): Readonly<IKEState> {
@@ -179,6 +186,12 @@ export class IKE extends Device<IKEState, IKEEvents> {
         const write = parseIKENumeric(message)
         this._state = { ...this._state, numeric: write }
         this.events.emit('numericUpdate', write)
+        break
+      }
+      case CMD_GPS_TIME: {
+        const gpsTime = parseGPSTime(message)
+        this._state = { ...this._state, gpsTime }
+        this.events.emit('gpsTimeUpdate', gpsTime)
         break
       }
     }

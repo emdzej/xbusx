@@ -17,22 +17,22 @@ Last refreshed: 2026-05-19.
 
 | Status | Count |
 |---|---:|
-| **Implemented** in `packages/commands/src/` | 44 |
-| **Known to exist in navcoder** but not yet covered | 69 |
+| **Implemented** in `packages/commands/src/` | 45 |
+| **Known to exist in navcoder** but not yet covered | 68 |
 | **Total navcoder I/K-bus command-name table** | 112 — *one byte (`0x1B`) appears twice as both `IKE text status` and `PDC sensor request` in different parsers; the union is 112 distinct meanings on 112 bytes.* |
 
-## Implemented (44 bytes)
+## Implemented (45 bytes)
 
 `0x01`, `0x02`, `0x07`, `0x0C`, `0x10`, `0x11`, `0x12`, `0x13`, `0x16`,
-`0x17`, `0x18`, `0x19`, `0x1A`, `0x1B`, `0x1D`, `0x23`, `0x24`, `0x2B`,
-`0x2C`, `0x31`, `0x32`, `0x38`, `0x39`, `0x3B`, `0x40`, `0x41`, `0x44`,
-`0x45`, `0x46`, `0x47`, `0x48`, `0x49`, `0x4F`, `0x55`, `0x59`, `0x5A`,
-`0x5B`, `0x72`, `0x73`, `0x74`, `0x76`, `0x79`, `0x7A`, `0xA0`.
+`0x17`, `0x18`, `0x19`, `0x1A`, `0x1B`, `0x1D`, `0x1F`, `0x23`, `0x24`,
+`0x2B`, `0x2C`, `0x31`, `0x32`, `0x38`, `0x39`, `0x3B`, `0x40`, `0x41`,
+`0x44`, `0x45`, `0x46`, `0x47`, `0x48`, `0x49`, `0x4F`, `0x55`, `0x59`,
+`0x5A`, `0x5B`, `0x72`, `0x73`, `0x74`, `0x76`, `0x79`, `0x7A`, `0xA0`.
 
 For each, see the constant `CMD_*` in the corresponding
 `packages/commands/src/<device>/<command>.ts`.
 
-## Gap — 69 command bytes navcoder names but we don't yet decode
+## Gap — 68 command bytes navcoder names but we don't yet decode
 
 Grouped by likely device / subsystem. Names are taken verbatim from
 navcoder's table. **Priority** is an editorial guess — `high` means
@@ -44,13 +44,16 @@ or chassis-specific.
 
 | Byte | Name | Priority | Note |
 |---:|---|---|---|
-| `0x1C` | Gong | high | Standalone gong (no text). Skipped from Batch 1 — no public frame example. |
-| `0x1F` | Time & date | mid | Used by the on-board clock. Skipped from Batch 1 — no public frame example. |
+| `0x1C` | Gong | low | navcoder's name-table calls this "Gong", **but the parser at `ibus.bas:17823–17893` only special-cases the exact bytes `0x1C 0x00` and renders that as "Device reset"**; other 0x1C payloads are dumped as opaque hex. No reference frame in BlueBus or Wilhelm. Held until we have a real bus capture to ground the actual semantic. |
 
 *Implemented in Batch 1 (2026-05-19):* `0x1A` IKE Check Control text
 (BlueBus authority), `0x44` IKE numeric write (BlueBus authority),
 `0x55` IKE Replicate Data (Wilhelm authority), `0x24` IKE OBC Text
 broadcast (Wilhelm authority).
+
+*Implemented in the follow-up RE pass:* `0x1F` GPS Time (Wilhelm
+`nav/1f.md` authority — NAV → IKE, 9-byte BCD-packed time + date).
+Lives under `packages/commands/src/nav/` since NAV is the broadcaster.
 
 ### Doors / body / immobiliser (GM / ZKE / EWS)
 
