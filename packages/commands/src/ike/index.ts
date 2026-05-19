@@ -1,5 +1,6 @@
 export * from './ccm-text.js'
 export * from './cluster-buttons.js'
+export * from './device-reset.js'
 export * from './ignition.js'
 export * from './language-region.js'
 export * from './numeric.js'
