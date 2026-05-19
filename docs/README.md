@@ -25,6 +25,7 @@ A reference manual for BMW I-Bus and K-Bus.
 - [protocol/framing](protocol/framing.md) — `SRC | LEN | DST | DATA… | XOR`.
 - [protocol/addressing](protocol/addressing.md) — source/destination semantics, broadcast, multicast, gateway routing.
 - [protocol/error-handling](protocol/error-handling.md) — checksums, timeouts, retries, malformed frames.
+- [protocol/dbus](protocol/dbus.md) — D-Bus diagnostic framing (`DST | LEN | DATA… | XOR`, no source byte). Draft, single-source (navcoder.exe).
 
 ### Devices
 

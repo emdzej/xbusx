@@ -28,7 +28,7 @@ Within a single vehicle you may encounter five named protocols. Only the first t
 | **I-Bus** | Instrument / infotainment. Present on chassis with high-cluster + navigation. | ✅ |
 | P-Bus | Peripheral bus internal to ZKE-III body electronics (E38/E39/E53). | ❌ |
 | M-Bus | HVAC stepper-motor control. | ❌ |
-| D-Bus | Diagnostic backbone (KWP2000). Different protocol entirely — different framing, different semantics. | ❌ |
+| D-Bus | Diagnostic backbone (BMW DS2, not KWP2000). Shares the 9600 8E1 wire with K/I, but uses a different frame header (`DST LEN DATA… XOR`, no source byte). | 🚧 — see [protocol/dbus](protocol/dbus.md) (draft, single-source). |
 
 On chassis that have **both K and I** (E38, E39, E53 High), the **IKE acts as a gateway** between them, routing messages whose destination lives on the other bus.
 
@@ -68,7 +68,7 @@ MINI and Range Rover (early L322) implementations sit on related but not identic
 
 **Out of scope:**
 
-- **D-Bus diagnostics** (KWP2000, EDIABAS jobs). The D-Bus uses different framing (no `SRC` byte) and different semantics. EDIABAS PRG files describe this layer. It is mentioned here only when a device has both an I/K-bus presence and a diagnostic role.
+- **D-Bus diagnostics** (BMW DS2, accessible at the OBD-II socket) is **partially in scope**: framing is now documented in [`protocol/dbus`](protocol/dbus.md) (single-source draft from navcoder.exe reverse-engineering). Per-command semantics, the full ECU address space, timing, and the auto-detection probe sequence remain out of scope pending further investigation. EDIABAS PRG files describe diagnostic-level details that remain outside this manual.
 - **P-Bus** internal-to-ZKE messaging.
 - **M-Bus** stepper-motor control.
 - Engine and transmission internal buses (CAN, etc.).
