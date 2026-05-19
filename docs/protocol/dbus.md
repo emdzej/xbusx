@@ -205,12 +205,91 @@ the bus and picks one of the two real modes. The detector logs
 specific probe bytes it emits for each protocol are not documented here
 yet — that's a follow-up.
 
-## Response-code byte
+## Command byte table
 
-When an ECU answers a tester request, the command byte (`DATA[0]`) is one of
-a well-known set of DS2 response codes. navcoder maps each byte to a
-human-readable string in a single function (`ibus.bas:3600–3680`), which
-makes the table easy to extract:
+navcoder maps every known DS2 command byte to a human-readable string in
+a single function — `Proc_5_5_4998B0` in `NavCoderDecomp/ibus.bas:3214`.
+Forty-eight bytes are recognised, partitioned into:
+
+- **Requests** — what the tester sends to an ECU. These appear in
+  `DATA[0]` of an outbound frame.
+- **Response codes** — what an ECU sends back. These appear in `DATA[0]`
+  of an inbound frame from the ECU's address, with any payload following.
+
+### Tester → ECU requests
+
+Identity, memory, and coding:
+
+| Byte | Name | Notes |
+|---:|---|---|
+| `0x01` | Write identity | |
+| `0x02` | Read AIS | "Address Identification String", per BMW DS2 lore. |
+| `0x03` | Write AIS | |
+| `0x04` | Read fault memory | Returns active DTCs. |
+| `0x05` | Clear fault memory | |
+| `0x06` | Read memory | Generic byte-range read from ECU memory. |
+| `0x07` | Write memory | |
+| `0x08` | Read coding data | The "coding string" used by NCS / NCS Expert. |
+| `0x09` | Write coding data | **Write-coding**: high-consequence command, primary danger from D-Bus access. |
+| `0x0A` | Request coding data checksum | |
+| `0x0B` | Read IO status | Generic read-by-block in DS2 parlance; first parameter byte selects the block. |
+| `0x0C` | Set IO status | |
+| `0x0D` | Read system address | |
+| `0x0E` | Read test stamp | |
+| `0x0F` | Set test stamp | |
+| `0x10` | Clear memory | |
+| `0x11` | Read OS boot mode | |
+| `0x12` | Reset control unit | Soft-reset the addressed ECU. |
+| `0x14` | Read fault shadow memory | Historic DTCs. |
+| `0x1B` | Read config data | |
+| `0x1C` | Set config data | |
+
+Selftest and download:
+
+| Byte | Name |
+|---:|---|
+| `0x30` | Selftest |
+| `0x31` | Download test program |
+| `0x32` | Start test program |
+| `0x33` | Stop test program |
+| `0x34` | HW manufacturer selftest |
+
+Adjustment / adaptation values:
+
+| Byte | Name |
+|---:|---|
+| `0x40` | Read adjustment value |
+| `0x41` | Set adjustment value |
+| `0x42` | Program adjustment value |
+| `0x43` | Delete adaptive value |
+
+Stepper-motor calibration (IHKA / climate-control specific):
+
+| Byte | Name |
+|---:|---|
+| `0x50` | Program stepmotor address |
+| `0x51` | Program stepmotor address (second variant) |
+| `0x52` | Delete stepmotor address |
+
+Manufacturer / coding / safety:
+
+| Byte | Name | Notes |
+|---:|---|---|
+| `0x53` | Read manufacturer data | |
+| `0x54` | Write manufacturer data | |
+| `0x69` | Read ZCS/FA | BMW vehicle-order / FA-string — the data NCS / E-Sys consult to know which options the car shipped with. |
+| `0x80` | Read crash telegram | Airbag-module-only. Reveals whether the car was in a crash event. |
+| `0x81` | Delete crash telegram | |
+| `0x90` | Login | DS2 access-control: some commands require a prior `0x90` with a per-ECU password. |
+| `0x9D` | Power down | |
+| `0x9F` | Terminate diagnostic mode | Ends the DS2 session politely. |
+
+### ECU → tester response codes
+
+These appear as `DATA[0]` in the ECU's reply. When the request succeeded
+and there is payload to return, the response carries `0xA0` followed by
+the returned bytes; when it failed, one of the negative codes appears
+with an optional error byte.
 
 | Byte | Meaning |
 |---:|---|
@@ -230,11 +309,48 @@ sources describe `A0 = positive`, `B0 = negative` (loosely; in fact the
 binary distinguishes A0 from A2 and B0 from FF). The navcoder table is the
 authoritative one here.
 
-> *Source:* `NavCoderDecomp/ibus.bas:3597–3681` — sequential `cmp byte,
-> 0x9F/A0/A1/A2/B0/B1/B2/FF; jnz next` branches inside the response-name
-> lookup. Each comparison is paired with one of the strings shown in the
-> table above (`"Terminate diagnostic mode"`, `"Diagnostic command
-> acknowledged"`, etc.).
+> *Source:* `NavCoderDecomp/ibus.bas:3214–3725` — `Proc_5_5_4998B0` is
+> the full DS2 command-name lookup. It is structurally identical to the
+> I/K-bus command-name lookup at `Proc_5_4_498820` (`ibus.bas:2097`):
+> a sequential `cmp byte, 0xNN; jnz next; mov edx, "name"` chain. The
+> two tables are kept separate within the same module — confirming that
+> navcoder treats the I/K-bus and D-Bus command vocabularies as
+> disjoint, as documented in [§ Bus overlap](#bus-overlap-with-ik-bus).
+
+## ECU address space on D-Bus
+
+navcoder uses the same one-byte address registry across both buses (the
+`Proc_5_3_497670` device-name lookup at `ibus.bas:895`). The subset that
+actively responds on D-Bus comprises the engine, transmission, safety,
+and chassis-control ECUs that don't participate in I/K-bus messaging,
+plus the few body controllers that have both an I/K-bus presence and a
+diagnostic role.
+
+| Address | Short | Long name | Notes |
+|---:|---|---|---|
+| `0x12` | DME | Digital motor electronics (ECU) | Engine controller. The canonical DS2 tester target for engine work. |
+| `0x14` | EGS | Electronic transmission control | Automatic-transmission controller (where fitted). |
+| *(varies)* | AB | Airbag module (Multi-Restraint System) | Per [overview.md](../overview.md) — at `0xA4` in the I/K-bus address registry as MRS; not all chassis expose it on D-Bus by the same byte. **Cross-check required before relying on a fixed address.** |
+| *(varies)* | ASC | Anti-lock braking + ASC | E38/E39 typically `0x36`; other chassis differ. |
+| *(varies)* | EKP | Electronically controlled fuel pump | Some chassis only. |
+| *(varies)* | LWS | Steering angle sensor | E39 / E46 and later. |
+| *(varies)* | AHL | Adaptive headlight control unit | Where fitted. |
+| `0x80` | IKE | Instrument cluster | Dual-presence: receives I/K-bus broadcasts and answers DS2 coding queries. |
+| `0xD0` | LCM | Light control module | Dual-presence: I/K-bus lamp-status broadcasts and DS2 coding access. |
+
+> *Sources for the names and shorts:* `NavCoderDecomp/ibus.bas:895–2094`
+> — the address-name lookup function. Specific entries: `ibus.bas:977`
+> (DME), `:1017` (EGS), `:1546` (DME long), `:1599` (EGS long), `:1610`
+> (AB short), `:1632` (ASC short), `:1659` (LWS short), `:1722` (AHL
+> long).
+
+> **The chassis-by-chassis address-byte mapping for D-Bus has gaps.**
+> The address-name lookup gives short names by byte, but not all bytes
+> resolve to the same ECU on every chassis. EDIABAS PRG files document
+> the chassis-conditional mappings authoritatively; that's out of scope
+> for this initial pass. Treat the table above as the *common-case*
+> mapping for E38/E39 chassis and verify against EDIABAS before
+> automating writes on any specific car.
 
 ## Bus overlap with I/K-bus
 
