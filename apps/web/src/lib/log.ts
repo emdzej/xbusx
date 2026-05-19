@@ -8,6 +8,15 @@ export type LogEntry =
       cmd: number
       len: number
     }
+  | {
+      id: number
+      kind: 'tx'
+      ts: number
+      source: string
+      dest: string
+      cmd: number
+      len: number
+    }
   | { id: number; kind: 'event'; ts: number; device: string; event: string; payload: unknown }
   | { id: number; kind: 'error'; ts: number; message: string }
   | { id: number; kind: 'system'; ts: number; message: string }

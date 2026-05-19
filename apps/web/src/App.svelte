@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { Device } from '@emdzej/ibusx-core'
 import { onMount } from 'svelte'
+import CommandBar from './lib/components/CommandBar.svelte'
 import ConnectScreen from './lib/components/ConnectScreen.svelte'
 import DeviceList from './lib/components/DeviceList.svelte'
 import EventLog from './lib/components/EventLog.svelte'
@@ -174,6 +175,17 @@ let currentDevice = $derived(
       {/if}
     </section>
     <footer>
+      <CommandBar
+        bus={connection.bus}
+        onError={(message) => {
+          log = appendLog(log, {
+            id: Date.now(),
+            kind: 'error',
+            ts: Date.now(),
+            message,
+          })
+        }}
+      />
       <EventLog entries={log} />
     </footer>
   </main>
@@ -200,7 +212,7 @@ let currentDevice = $derived(
     flex: 1;
     display: grid;
     grid-template-columns: 220px 1fr;
-    grid-template-rows: 1fr 220px;
+    grid-template-rows: 1fr 260px;
     grid-template-areas:
       'aside section'
       'footer footer';
@@ -225,5 +237,12 @@ let currentDevice = $derived(
     border-top: 1px solid var(--border);
     background: var(--bg-elev);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  footer :global(.log) {
+    flex: 1;
   }
 </style>

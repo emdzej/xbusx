@@ -52,6 +52,13 @@ $effect(() => {
         <span class="dst">{entry.dest}</span>
         <span class="cmd">{formatCmd(entry.cmd)}</span>
         <span class="muted">({entry.len}B)</span>
+      {:else if entry.kind === 'tx'}
+        <span class="tx">tx</span>
+        <span class="src">{entry.source}</span>
+        <span class="arrow">→</span>
+        <span class="dst">{entry.dest}</span>
+        <span class="cmd">{formatCmd(entry.cmd)}</span>
+        <span class="muted">({entry.len}B)</span>
       {:else if entry.kind === 'event'}
         <span class="dev">{entry.device}</span>
         <span class="evt">{entry.event}</span>
@@ -118,6 +125,11 @@ $effect(() => {
 
   .sys {
     color: var(--accent);
+  }
+
+  .tx {
+    color: var(--yellow);
+    font-weight: 600;
   }
 
   .arrow {

@@ -45,6 +45,17 @@ export async function connect(args: {
       len: msg.payload.length,
     })
   })
+  bus.events.on('txFrame', (msg) => {
+    args.onLog({
+      id: nextLogId(),
+      kind: 'tx',
+      ts: Date.now(),
+      source: addressName(msg.source),
+      dest: addressName(msg.destination),
+      cmd: msg.payload[0] ?? 0,
+      len: msg.payload.length,
+    })
+  })
   bus.events.on('error', (err) => {
     args.onLog({ id: nextLogId(), kind: 'error', ts: Date.now(), message: err.message })
   })
