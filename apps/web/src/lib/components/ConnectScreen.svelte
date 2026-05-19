@@ -30,7 +30,7 @@ async function pick(): Promise<void> {
     <h2>Connect to a BMW I/K-bus</h2>
     <p class="muted">
       The browser will prompt you to pick a serial port.  Best results with a 9600-baud 8E1
-      FTDI adapter connected to the K-bus or I-bus pair.
+      FTDI adapter tapped onto the single-wire K-bus or I-bus line.
     </p>
 
     <label>
