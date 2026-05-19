@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { makeMessage } from '../internal.js'
 
 export const CMD_DIA_JOB_REQUEST = 0x0c
@@ -58,7 +58,7 @@ export interface BuildZKE3LockRequestArgs {
 }
 
 /** Build a 4-byte ZKE3 lock-job request: `0C 00 <job> 01`. */
-export function buildZKE3LockRequest(args: BuildZKE3LockRequestArgs): IBusMessage {
+export function buildZKE3LockRequest(args: BuildZKE3LockRequestArgs): IKBusMessage {
   return makeMessage(args.source, DEVICE_ADDRESSES.GM, [CMD_DIA_JOB_REQUEST, 0x00, args.job, 0x01])
 }
 
@@ -69,6 +69,6 @@ export interface BuildZKE5LockRequestArgs {
 }
 
 /** Build a 3-byte ZKE5 lock-job request: `0C <job> 01`. */
-export function buildZKE5LockRequest(args: BuildZKE5LockRequestArgs): IBusMessage {
+export function buildZKE5LockRequest(args: BuildZKE5LockRequestArgs): IKBusMessage {
   return makeMessage(args.source, DEVICE_ADDRESSES.GM, [CMD_DIA_JOB_REQUEST, args.job, 0x01])
 }

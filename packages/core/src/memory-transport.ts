@@ -17,7 +17,7 @@ export interface MemoryTransportOptions {
  * - Use `inject(bytes)` to simulate a frame arriving from a peer.
  * - Use `MemoryTransport.pair()` to create two linked transports — writes to
  *   one appear as data on the other.  Useful for end-to-end tests across two
- *   `IBus` instances.
+ *   `IKBus` instances.
  */
 export class MemoryTransport implements Transport {
   readonly events: TypedEmitter<TransportEvents>

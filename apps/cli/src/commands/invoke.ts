@@ -1,6 +1,6 @@
 import type { ControlDescriptor, ControlParam, Device } from '@emdzej/ibusx-core'
-import { IBus, Vehicle } from '@emdzej/ibusx-core'
-import { SerialTransport } from '@emdzej/ibusx-transport-serial'
+import { IKBus, Vehicle } from '@emdzej/ibusx-core'
+import { SerialTransport } from '@emdzej/ikbus-transport-serial'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { ArgValidationError, coerceArg } from '../coerce.js'
@@ -74,7 +74,7 @@ function addControlSubcommand(
 
     const baud = Number.parseInt(rootOpts.baud, 10)
     const transport = new SerialTransport({ path: rootOpts.port, baudRate: baud })
-    const bus = new IBus(transport, new Vehicle())
+    const bus = new IKBus(transport, new Vehicle())
     const entry = findDeviceEntry(deviceName)
     if (entry === undefined) throw new Error(`internal: unknown device ${deviceName}`)
     const device = bus.registerDevice(entry.create())

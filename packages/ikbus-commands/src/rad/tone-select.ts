@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -46,7 +46,7 @@ export interface RADToneSelect {
   extra: Uint8Array
 }
 
-export function parseRADToneSelect(message: IBusMessage): RADToneSelect {
+export function parseRADToneSelect(message: IKBusMessage): RADToneSelect {
   assertCommand(message, CMD_RAD_TONE_SELECT)
   assertMinPayloadLength(message, 2)
   const controlByte = message.payload[1]!
@@ -64,7 +64,7 @@ export interface BuildRADToneSelectArgs {
   extra?: ReadonlyArray<number> | Uint8Array
 }
 
-export function buildRADToneSelect(args: BuildRADToneSelectArgs): IBusMessage {
+export function buildRADToneSelect(args: BuildRADToneSelectArgs): IKBusMessage {
   if (args.controlByte < 0 || args.controlByte > 0xff) {
     throw new CommandPayloadError(
       `controlByte 0x${args.controlByte.toString(16)} out of byte range`,

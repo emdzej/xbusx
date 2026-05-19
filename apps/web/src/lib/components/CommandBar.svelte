@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { IBus } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type DeviceAddress } from '@emdzej/ibusx-protocol'
+import type { IKBus } from '@emdzej/ibusx-core'
+import { DEVICE_ADDRESSES, type DeviceAddress } from '@emdzej/ikbus-protocol'
 import { parseHex } from '../hex.js'
 
 interface Props {
-  bus: IBus
+  bus: IKBus
   /** Surface errors back to App.svelte's log. */
   onError: (message: string) => void
 }

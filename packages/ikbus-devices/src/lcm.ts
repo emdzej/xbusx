@@ -1,3 +1,4 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildClusterIndicators,
   buildClusterIndicatorsRequest,
@@ -11,9 +12,8 @@ import {
   parseCCMStatus,
   parseClusterIndicators,
   parseIKERedundantData,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_INDICATORS = 0x5b
 
@@ -69,7 +69,7 @@ export class LCM extends Device<LCMState, LCMEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.payload.length < 1) return
     if (message.source === this.address) {
       this.handleOutbound(message)
@@ -78,7 +78,7 @@ export class LCM extends Device<LCMState, LCMEvents> {
     }
   }
 
-  private handleOutbound(message: IBusMessage): void {
+  private handleOutbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_INDICATORS: {
@@ -102,7 +102,7 @@ export class LCM extends Device<LCMState, LCMEvents> {
     }
   }
 
-  private handleInbound(message: IBusMessage): void {
+  private handleInbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     if (cmd === CMD_IKE_REDUNDANT_DATA_REQUEST) {
       this._state = { ...this._state, lastRedundantDataRequestAt: Date.now() }

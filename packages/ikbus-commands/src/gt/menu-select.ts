@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -25,7 +25,7 @@ export interface GTMenuSelect {
   param2: number
 }
 
-export function parseGTMenuSelect(message: IBusMessage): GTMenuSelect {
+export function parseGTMenuSelect(message: IKBusMessage): GTMenuSelect {
   assertCommand(message, CMD_GT_MENU_SELECT)
   assertPayloadLength(message, 3)
   return {
@@ -44,7 +44,7 @@ export interface BuildGTMenuSelectArgs {
 /** Convenience constants for the only Wilhelm-documented menu selection. */
 export const GT_MENU_SELECT_TELEPHONE = { param1: 0x02, param2: 0x0c } as const
 
-export function buildGTMenuSelect(args: BuildGTMenuSelectArgs): IBusMessage {
+export function buildGTMenuSelect(args: BuildGTMenuSelectArgs): IKBusMessage {
   if (args.param1 < 0 || args.param1 > 0xff) {
     throw new CommandPayloadError(`param1 0x${args.param1.toString(16)} out of byte range`)
   }

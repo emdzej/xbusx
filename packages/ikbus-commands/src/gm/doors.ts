@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_DOORS_REQUEST = 0x79
@@ -59,7 +59,7 @@ function encodeCentralLock(state: CentralLockState): number {
 }
 
 /** Parse a `0x7A` door / lid status broadcast from the GM. */
-export function parseDoorsStatus(message: IBusMessage): DoorsState {
+export function parseDoorsStatus(message: IKBusMessage): DoorsState {
   assertCommand(message, CMD_DOORS_STATUS)
   assertMinPayloadLength(message, 3)
   const b1 = message.payload[1]!
@@ -88,7 +88,7 @@ export interface BuildDoorsStatusArgs extends Partial<DoorsState> {
 }
 
 /** Build a `0x7A` door / lid status broadcast. */
-export function buildDoorsStatus(args: BuildDoorsStatusArgs = {}): IBusMessage {
+export function buildDoorsStatus(args: BuildDoorsStatusArgs = {}): IKBusMessage {
   const b1 =
     (args.driverDoorOpen ? 0x01 : 0) |
     (args.passengerDoorOpen ? 0x02 : 0) |
@@ -118,6 +118,6 @@ export interface BuildDoorsRequestArgs {
 }
 
 /** Build a `0x79` request asking the GM to re-broadcast its door / lid state. */
-export function buildDoorsRequest(args: BuildDoorsRequestArgs): IBusMessage {
+export function buildDoorsRequest(args: BuildDoorsRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.GM, [CMD_DOORS_REQUEST])
 }

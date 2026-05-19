@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -13,7 +13,7 @@ export interface VolumeChange {
 }
 
 /** Parse a `0x32` volume-change frame. */
-export function parseVolume(message: IBusMessage): VolumeChange {
+export function parseVolume(message: IKBusMessage): VolumeChange {
   assertCommand(message, CMD_VOLUME)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -32,7 +32,7 @@ export interface BuildVolumeArgs {
 }
 
 /** Build a `0x32` volume-change frame.  Defaults source to MFL, destination to RAD. */
-export function buildVolume(args: BuildVolumeArgs): IBusMessage {
+export function buildVolume(args: BuildVolumeArgs): IKBusMessage {
   const steps = args.steps ?? 1
   if (steps < 1 || steps > 15) {
     throw new CommandPayloadError(`Volume steps ${steps} out of range (1..15)`)

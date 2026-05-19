@@ -1,14 +1,14 @@
-import { parseMFLButton, parseVolume } from '@emdzej/ibusx-commands'
-import { IBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES } from '@emdzej/ibusx-protocol'
+import { IKBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
+import { parseMFLButton, parseVolume } from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES } from '@emdzej/ikbus-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { MFL, MFLControls } from '../src/mfl.js'
 
 async function setup() {
   const [tx, rx] = MemoryTransport.pair()
   const vehicle = new Vehicle({ chassis: 'E39' })
-  const txBus = new IBus(tx, vehicle)
-  const rxBus = new IBus(rx, vehicle)
+  const txBus = new IKBus(tx, vehicle)
+  const rxBus = new IKBus(rx, vehicle)
   const mfl = txBus.registerDevice(new MFL())
   mfl.mode = 'active'
   await txBus.start()

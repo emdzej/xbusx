@@ -1,6 +1,6 @@
-import { type LightSensorState, parseLightSensor } from '@emdzej/ibusx-commands'
 import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { type LightSensorState, parseLightSensor } from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_LIGHT_SENSOR = 0x59
 
@@ -22,7 +22,7 @@ export class RLS extends Device<RLSState, RLSEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.source !== this.address) return
     if (message.payload[0] !== CMD_LIGHT_SENSOR) return
     const light = parseLightSensor(message)

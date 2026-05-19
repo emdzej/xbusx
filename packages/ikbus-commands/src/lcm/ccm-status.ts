@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_CCM_STATUS = 0x51
@@ -28,7 +28,7 @@ const BIT_KEY_IN_IGNITION = 0x04
 const BIT_WASHER_FLUID_LOW = 0x10
 const BIT_OIL_LEVEL = 0x40
 
-export function parseCCMStatus(message: IBusMessage): CCMStatus {
+export function parseCCMStatus(message: IKBusMessage): CCMStatus {
   assertCommand(message, CMD_CCM_STATUS)
   assertPayloadLength(message, 2)
   const b = message.payload[1]!
@@ -52,7 +52,7 @@ export interface BuildCCMStatusArgs {
   oilLevel?: boolean
 }
 
-export function buildCCMStatus(args: BuildCCMStatusArgs): IBusMessage {
+export function buildCCMStatus(args: BuildCCMStatusArgs): IKBusMessage {
   let b = 0
   if (args.brakeFluidLow) b |= BIT_BRAKE_FLUID_LOW
   if (args.fastenSeatbelt) b |= BIT_FASTEN_SEATBELT

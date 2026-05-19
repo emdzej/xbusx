@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import {
   buildZKE3LockRequest,

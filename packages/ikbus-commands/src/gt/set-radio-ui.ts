@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_GT_SET_RADIO_UI = 0x45
@@ -27,7 +27,7 @@ export interface SetRadioUI {
 }
 
 /** Parse a `0x45` set-radio-UI frame. */
-export function parseSetRadioUI(message: IBusMessage): SetRadioUI {
+export function parseSetRadioUI(message: IKBusMessage): SetRadioUI {
   assertCommand(message, CMD_GT_SET_RADIO_UI)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -52,7 +52,7 @@ export interface BuildSetRadioUIArgs {
 }
 
 /** Build a `0x45` set-radio-UI frame.  Defaults source to GT, dest to RAD. */
-export function buildSetRadioUI(args: BuildSetRadioUIArgs): IBusMessage {
+export function buildSetRadioUI(args: BuildSetRadioUIArgs): IKBusMessage {
   const byte =
     args.rawByte !== undefined
       ? args.rawByte & 0xff

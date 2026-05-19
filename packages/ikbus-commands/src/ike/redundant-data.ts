@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -15,7 +15,7 @@ export const CMD_IKE_REDUNDANT_DATA = 0x54
 export function buildIKERedundantDataRequest(args: {
   source?: DeviceAddress
   destination?: DeviceAddress
-}): IBusMessage {
+}): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.IKE,
     args.destination ?? DEVICE_ADDRESSES.LCM,
@@ -84,7 +84,7 @@ function encodeVin(vin: string): Uint8Array {
   return new Uint8Array([cA, cB, (d1 << 4) | d2, (d3 << 4) | d4, (d5 << 4) | 0])
 }
 
-export function parseIKERedundantData(message: IBusMessage): IKERedundantData {
+export function parseIKERedundantData(message: IKBusMessage): IKERedundantData {
   assertCommand(message, CMD_IKE_REDUNDANT_DATA)
   // 1 cmd + 5 VIN + 2 mileage + 1 TBC + 1 fuel + 2 oil + 2 time = 14 bytes
   assertPayloadLength(message, 14)
@@ -117,7 +117,7 @@ export interface BuildIKERedundantDataArgs {
   timeDays: number
 }
 
-export function buildIKERedundantData(args: BuildIKERedundantDataArgs): IBusMessage {
+export function buildIKERedundantData(args: BuildIKERedundantDataArgs): IKBusMessage {
   const vinBytes = encodeVin(args.vin)
   const mileageWord = Math.round(args.mileageKm / 100)
   const fuelByte = Math.round(args.fuelLitres / 10)

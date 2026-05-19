@@ -20,7 +20,7 @@
 
 ## Messages
 
-No per-command documentation exists in the surveyed sources. BlueBus tracks IRIS at the module-status level (`moduleStatus.IRIS` in the IBus context, `ibus.h:684`) but exposes no IRIS-specific commands.
+No per-command documentation exists in the surveyed sources. BlueBus tracks IRIS at the module-status level (`moduleStatus.IRIS` in the IKBus context, `ibus.h:684`) but exposes no IRIS-specific commands.
 
 > *TBC:* Capture and characterise IRIS traffic on an E39 with IRIS installed. It is likely the IRIS responds to the same write surface used by the radio and MID (`0x21`, `0x23`, `0x24`) — but as the destination rather than as two separate addresses.
 

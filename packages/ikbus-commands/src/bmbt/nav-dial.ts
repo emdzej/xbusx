@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -13,7 +13,7 @@ export interface NavDialEvent {
 }
 
 /** Parse a `0x49` BMBT nav-dial rotation event. */
-export function parseNavDial(message: IBusMessage): NavDialEvent {
+export function parseNavDial(message: IKBusMessage): NavDialEvent {
   assertCommand(message, CMD_BMBT_NAV_DIAL)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -32,7 +32,7 @@ export interface BuildNavDialArgs {
 }
 
 /** Build a `0x49` BMBT nav-dial frame.  Defaults source to BMBT, dest to GT. */
-export function buildNavDial(args: BuildNavDialArgs): IBusMessage {
+export function buildNavDial(args: BuildNavDialArgs): IKBusMessage {
   const steps = args.steps ?? 1
   if (steps < 1 || steps > 15) {
     throw new CommandPayloadError(`Nav-dial steps ${steps} out of range (1..15)`)

@@ -66,7 +66,7 @@ if (
 ) {
     if (ibus->txRetries < IBUS_TX_MAX_RETRIES) {
         ibus->txRetries++;
-        LogRaw("IBus: ERR_RTX[%d]\r\n", ibus->txRetries);
+        LogRaw("IKBus: ERR_RTX[%d]\r\n", ibus->txRetries);
         ibus->txBufferReadIdx = ibus->txBufferReadbackIdx;
     } else {
         ibus->txBufferReadbackIdx = ibus->txBufferReadIdx;

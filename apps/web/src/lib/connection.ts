@@ -1,12 +1,12 @@
-import type { Device, IBus } from '@emdzej/ibusx-core'
-import { IBus as IBusImpl, Vehicle } from '@emdzej/ibusx-core'
-import { addressName } from '@emdzej/ibusx-protocol'
-import { WebSerialTransport } from '@emdzej/ibusx-transport-web-serial'
+import type { Device, IKBus } from '@emdzej/ibusx-core'
+import { IKBus as IBusImpl, Vehicle } from '@emdzej/ibusx-core'
+import { addressName } from '@emdzej/ikbus-protocol'
+import { WebSerialTransport } from '@emdzej/ikbus-transport-web-serial'
 import { type LogEntry, nextLogId } from './log.js'
 import { type DeviceEntry, registerAll } from './registry.js'
 
 export interface Connection {
-  readonly bus: IBus
+  readonly bus: IKBus
   readonly entries: readonly DeviceEntry[]
   // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
   readonly devices: readonly Device<any, any>[]
@@ -18,7 +18,7 @@ type EmitFn = (event: string, payload?: unknown) => boolean
 
 /**
  * Open the user-picked SerialPort and produce a fully-wired Connection: a
- * running IBus with every device registered, with the supplied callbacks
+ * running IKBus with every device registered, with the supplied callbacks
  * invoked on every frame and device-level event so the UI can update.
  */
 export async function connect(args: {

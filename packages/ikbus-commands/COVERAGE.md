@@ -1,4 +1,4 @@
-# `@emdzej/ibusx-commands` coverage
+# `@emdzej/ikbus-commands` coverage
 
 Snapshot of what command bytes the package has codecs for, what's known
 to exist but is not yet implemented, and where each gap maps in

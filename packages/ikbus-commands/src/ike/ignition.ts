@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -24,7 +24,7 @@ const STATE_BY_BYTE: Readonly<Record<number, IgnitionState>> = {
 }
 
 /** Parse a `0x11` ignition-status broadcast from the IKE. */
-export function parseIgnitionStatus(message: IBusMessage): IgnitionState {
+export function parseIgnitionStatus(message: IKBusMessage): IgnitionState {
   assertCommand(message, CMD_IGNITION_STATUS)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -46,7 +46,7 @@ export interface BuildIgnitionStatusArgs {
 }
 
 /** Build a `0x11` ignition-status broadcast. */
-export function buildIgnitionStatus(args: BuildIgnitionStatusArgs): IBusMessage {
+export function buildIgnitionStatus(args: BuildIgnitionStatusArgs): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.IKE,
     args.destination ?? DEVICE_ADDRESSES.GLO,
@@ -61,6 +61,6 @@ export interface BuildIgnitionRequestArgs {
 }
 
 /** Build a `0x10` request asking the IKE to re-broadcast its ignition status. */
-export function buildIgnitionRequest(args: BuildIgnitionRequestArgs): IBusMessage {
+export function buildIgnitionRequest(args: BuildIgnitionRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.IKE, [CMD_IGNITION_REQUEST])
 }

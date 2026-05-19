@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_TEL_LED = 0x2b
@@ -36,7 +36,7 @@ export interface TelLEDFrame {
 }
 
 /** Parse a `0x2B` telephone-LED frame (TEL → displays multicast). */
-export function parseTelLED(message: IBusMessage): TelLEDFrame {
+export function parseTelLED(message: IKBusMessage): TelLEDFrame {
   assertCommand(message, CMD_TEL_LED)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -50,7 +50,7 @@ export interface BuildTelLEDArgs {
 }
 
 /** Build a `0x2B` telephone-LED frame.  Defaults source to TEL, dest to ANZV multicast. */
-export function buildTelLED(args: BuildTelLEDArgs): IBusMessage {
+export function buildTelLED(args: BuildTelLEDArgs): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.TEL,
     args.destination ?? DEVICE_ADDRESSES.ANZV,

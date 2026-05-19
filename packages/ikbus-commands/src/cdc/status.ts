@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -84,7 +84,7 @@ const ERROR_NO_DISC = 0x08
 const ERROR_NO_MAGAZINE = 0x10
 
 /** Parse a `0x39` CDC status response (CDC → radio). */
-export function parseCDCStatus(message: IBusMessage): CDCStatusFrame {
+export function parseCDCStatus(message: IKBusMessage): CDCStatusFrame {
   assertCommand(message, CMD_CDC_STATUS)
   // 1997-era frames have 7 payload bytes (incl. cmd); 2001+ frames have more.
   // Either way we want at least 7.
@@ -127,7 +127,7 @@ export interface BuildCDCStatusArgs {
 }
 
 /** Build a `0x39` CDC status response. */
-export function buildCDCStatus(args: BuildCDCStatusArgs): IBusMessage {
+export function buildCDCStatus(args: BuildCDCStatusArgs): IKBusMessage {
   let statusByte: number
   if (typeof args.status === 'number') {
     statusByte = args.status & 0xff

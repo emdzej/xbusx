@@ -1,5 +1,5 @@
 {
-  "name": "@emdzej/ibusx-commands",
+  "name": "@emdzej/ikbus-commands",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -23,7 +23,7 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
-    "@emdzej/ibusx-protocol": "workspace:*"
+    "@emdzej/ikbus-protocol": "workspace:*"
   },
   "devDependencies": {
     "@emdzej/ibusx-tsconfig": "workspace:*",

@@ -1,12 +1,12 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildPDCSensorRequest,
   type PDCDistances,
   type PDCStatus,
   parsePDCSensors,
   parsePDCStatus,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_STATUS = 0x07
 const CMD_SENSOR_RESPONSE = 0xa0
@@ -31,7 +31,7 @@ export class PDC extends Device<PDCState, PDCEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.source !== this.address) return
     if (message.payload.length < 1) return
     const cmd = message.payload[0]

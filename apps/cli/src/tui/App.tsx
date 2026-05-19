@@ -1,4 +1,4 @@
-import type { Device, IBus } from '@emdzej/ibusx-core'
+import type { Device, IKBus } from '@emdzej/ibusx-core'
 import { Box, useApp, useInput } from 'ink'
 import { type ReactElement, useEffect, useState } from 'react'
 import type { DeviceEntry } from '../registry.js'
@@ -10,7 +10,7 @@ import { StatePane } from './components/StatePane.js'
 import { type LogEntry, nextLogId } from './log.js'
 
 interface AppProps {
-  bus: IBus
+  bus: IKBus
   port: string
   entries: readonly DeviceEntry[]
   // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics

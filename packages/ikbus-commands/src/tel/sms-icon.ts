@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_TEL_SMS_ICON = 0xa6
@@ -19,7 +19,7 @@ export interface TELSMSIcon {
   reserved: number
 }
 
-export function parseTELSMSIcon(message: IBusMessage): TELSMSIcon {
+export function parseTELSMSIcon(message: IKBusMessage): TELSMSIcon {
   assertCommand(message, CMD_TEL_SMS_ICON)
   assertPayloadLength(message, 3)
   return {
@@ -35,7 +35,7 @@ export interface BuildTELSMSIconArgs {
   reserved?: number
 }
 
-export function buildTELSMSIcon(args: BuildTELSMSIconArgs): IBusMessage {
+export function buildTELSMSIcon(args: BuildTELSMSIconArgs): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.TEL,
     args.destination ?? DEVICE_ADDRESSES.ANZV,

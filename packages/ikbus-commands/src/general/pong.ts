@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_PONG = 0x02
@@ -31,7 +31,7 @@ export interface PongFrame {
 }
 
 /** Parse a `0x02` Pong / Announce frame. */
-export function parsePong(message: IBusMessage): PongFrame {
+export function parsePong(message: IKBusMessage): PongFrame {
   assertCommand(message, CMD_PONG)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -52,7 +52,7 @@ export interface BuildPongArgs {
 }
 
 /** Build a `0x02` Pong / Announce frame.  Defaults destination to GLO (broadcast). */
-export function buildPong(args: BuildPongArgs): IBusMessage {
+export function buildPong(args: BuildPongArgs): IKBusMessage {
   const variant = (args.variantBits ?? 0) & 0xf8
   const byte = variant | (args.isAnnounce ? 0x01 : 0x00)
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.GLO, [CMD_PONG, byte])

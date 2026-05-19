@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_TEMPERATURE = 0x19
@@ -23,7 +23,7 @@ function encodeSignedByte(value: number): number {
 }
 
 /** Parse a `0x19` temperature broadcast.  Ambient is signed, coolant unsigned. */
-export function parseTemperature(message: IBusMessage): Temperature {
+export function parseTemperature(message: IKBusMessage): Temperature {
   assertCommand(message, CMD_TEMPERATURE)
   // Frame is `19 <ambient> <coolant> 00` — 4 bytes including the command.
   // We accept any payload of ≥3 bytes and ignore trailing.
@@ -42,7 +42,7 @@ export interface BuildTemperatureArgs {
 }
 
 /** Build a `0x19` temperature broadcast. */
-export function buildTemperature(args: BuildTemperatureArgs): IBusMessage {
+export function buildTemperature(args: BuildTemperatureArgs): IKBusMessage {
   const ambient = encodeSignedByte(args.ambientC)
   const coolant = Math.max(0, Math.min(0xff, Math.round(args.coolantC)))
   return makeMessage(
@@ -58,7 +58,7 @@ export interface BuildTemperatureRequestArgs {
 }
 
 /** Build a `0x1D` request asking the IKE to broadcast temperature. */
-export function buildTemperatureRequest(args: BuildTemperatureRequestArgs): IBusMessage {
+export function buildTemperatureRequest(args: BuildTemperatureRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.IKE, [
     CMD_TEMPERATURE_REQUEST,
   ])

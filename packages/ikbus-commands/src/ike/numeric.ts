@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -35,7 +35,7 @@ export interface IKENumericWrite {
  * `bcd` is `((value / 10) << 4) | (value % 10)` — i.e. each nibble holds
  * one decimal digit.
  */
-export function parseIKENumeric(message: IBusMessage): IKENumericWrite {
+export function parseIKENumeric(message: IKBusMessage): IKENumericWrite {
   assertCommand(message, CMD_IKE_NUMERIC_WRITE)
   assertPayloadLength(message, 3)
   const raw = message.payload[1]!
@@ -64,7 +64,7 @@ export interface BuildIKENumericArgs {
 }
 
 /** Build a `0x44` IKE numeric-write frame.  Direction PDC → IKE by default. */
-export function buildIKENumeric(args: BuildIKENumericArgs): IBusMessage {
+export function buildIKENumeric(args: BuildIKENumericArgs): IKBusMessage {
   if (args.mode === IKE_NUMERIC_CLEAR) {
     return makeMessage(
       args.source ?? DEVICE_ADDRESSES.PDC,

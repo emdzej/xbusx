@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_NAV_VIEW_STATUS = 0xab
@@ -19,7 +19,7 @@ export interface NAVViewStatus {
   rawByte: number
 }
 
-export function parseNAVViewStatus(message: IBusMessage): NAVViewStatus {
+export function parseNAVViewStatus(message: IKBusMessage): NAVViewStatus {
   assertCommand(message, CMD_NAV_VIEW_STATUS)
   assertPayloadLength(message, 2)
   const b = message.payload[1]!
@@ -37,7 +37,7 @@ export interface BuildNAVViewStatusArgs {
   navNotFocused?: boolean
 }
 
-export function buildNAVViewStatus(args: BuildNAVViewStatusArgs): IBusMessage {
+export function buildNAVViewStatus(args: BuildNAVViewStatusArgs): IKBusMessage {
   let b = 0
   if (args.unknownFlag) b |= 0x01
   if (args.navNotFocused) b |= 0x20

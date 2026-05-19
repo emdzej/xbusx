@@ -1,5 +1,5 @@
-import { IBus, Vehicle } from '@emdzej/ibusx-core'
-import { SerialTransport } from '@emdzej/ibusx-transport-serial'
+import { IKBus, Vehicle } from '@emdzej/ibusx-core'
+import { SerialTransport } from '@emdzej/ikbus-transport-serial'
 import { render } from 'ink'
 import { createElement } from 'react'
 import { registerAll } from '../registry.js'
@@ -17,15 +17,15 @@ export interface LaunchOptions {
  * initial-port hint differs.
  */
 export async function launchTui(options: LaunchOptions): Promise<void> {
-  let openedBus: IBus | undefined
+  let openedBus: IKBus | undefined
 
   async function attach(port: string): Promise<{
-    bus: IBus
+    bus: IKBus
     entries: ReturnType<typeof registerAll>['entries']
     devices: ReturnType<typeof registerAll>['devices']
   }> {
     const transport = new SerialTransport({ path: port, baudRate: options.baudRate })
-    const bus = new IBus(transport, new Vehicle())
+    const bus = new IKBus(transport, new Vehicle())
     const { entries, devices } = registerAll(bus)
     await bus.start()
     openedBus = bus

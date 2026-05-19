@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -23,7 +23,7 @@ export interface TELDirectDial {
   phoneNumber: string
 }
 
-export function parseTELDirectDial(message: IBusMessage): TELDirectDial {
+export function parseTELDirectDial(message: IKBusMessage): TELDirectDial {
   assertCommand(message, CMD_TEL_DIRECT_DIAL)
   // cmd + 2 header bytes + ≥ 1 digit
   assertMinPayloadLength(message, 4)
@@ -46,7 +46,7 @@ export interface BuildTELDirectDialArgs {
   reservedHeader?: readonly [number, number]
 }
 
-export function buildTELDirectDial(args: BuildTELDirectDialArgs): IBusMessage {
+export function buildTELDirectDial(args: BuildTELDirectDialArgs): IKBusMessage {
   const header = args.reservedHeader ?? ([0x00, 0x11] as const)
   const bytes: number[] = [CMD_TEL_DIRECT_DIAL, header[0] & 0xff, header[1] & 0xff]
   for (let i = 0; i < args.phoneNumber.length; i++) {

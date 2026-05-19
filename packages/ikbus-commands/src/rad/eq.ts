@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -36,7 +36,7 @@ export interface RADEqUpdate {
   rawByte: number
 }
 
-export function parseRADEqUpdate(message: IBusMessage): RADEqUpdate {
+export function parseRADEqUpdate(message: IKBusMessage): RADEqUpdate {
   assertCommand(message, CMD_RAD_EQ)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -56,7 +56,7 @@ export interface BuildRADEqUpdateArgs {
   rawValue: number
 }
 
-export function buildRADEqUpdate(args: BuildRADEqUpdateArgs): IBusMessage {
+export function buildRADEqUpdate(args: BuildRADEqUpdateArgs): IKBusMessage {
   if ((args.property & ~0xe0) !== 0) {
     throw new CommandPayloadError(`property byte 0x${args.property.toString(16)} has low bits set`)
   }

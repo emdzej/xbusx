@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_NAV_CONTROL = 0xaa
@@ -53,7 +53,7 @@ export interface NAVControl {
   data: Uint8Array
 }
 
-export function parseNAVControl(message: IBusMessage): NAVControl {
+export function parseNAVControl(message: IKBusMessage): NAVControl {
   assertCommand(message, CMD_NAV_CONTROL)
   assertMinPayloadLength(message, 2)
   return { data: message.payload.slice(1) }
@@ -65,7 +65,7 @@ export interface BuildNAVControlArgs {
   data: ReadonlyArray<number> | Uint8Array
 }
 
-export function buildNAVControl(args: BuildNAVControlArgs): IBusMessage {
+export function buildNAVControl(args: BuildNAVControlArgs): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.SES,
     args.destination ?? DEVICE_ADDRESSES.NAV,

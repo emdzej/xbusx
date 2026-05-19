@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_PDC_STATUS = 0x07
@@ -20,7 +20,7 @@ export interface PDCDistances {
 }
 
 /** Parse a `0xA0` PDC sensor-response frame. */
-export function parsePDCSensors(message: IBusMessage): PDCDistances {
+export function parsePDCSensors(message: IKBusMessage): PDCDistances {
   assertCommand(message, CMD_PDC_SENSOR_RESPONSE)
   assertMinPayloadLength(message, 9)
   return {
@@ -41,7 +41,7 @@ export interface BuildPDCSensorsArgs extends Partial<PDCDistances> {
 }
 
 /** Build a `0xA0` PDC sensor-response frame.  Missing fields default to PDC_NO_OBSTACLE. */
-export function buildPDCSensors(args: BuildPDCSensorsArgs = {}): IBusMessage {
+export function buildPDCSensors(args: BuildPDCSensorsArgs = {}): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.PDC,
     args.destination ?? DEVICE_ADDRESSES.GLO,
@@ -62,7 +62,7 @@ export function buildPDCSensors(args: BuildPDCSensorsArgs = {}): IBusMessage {
 export type PDCStatus = 'INACTIVE' | 'ACTIVE'
 
 /** Parse a `0x07` PDC status frame. */
-export function parsePDCStatus(message: IBusMessage): PDCStatus {
+export function parsePDCStatus(message: IKBusMessage): PDCStatus {
   assertCommand(message, CMD_PDC_STATUS)
   assertMinPayloadLength(message, 2)
   return message.payload[1] === 0 ? 'INACTIVE' : 'ACTIVE'
@@ -75,7 +75,7 @@ export interface BuildPDCStatusArgs {
 }
 
 /** Build a `0x07` PDC status frame. */
-export function buildPDCStatus(args: BuildPDCStatusArgs): IBusMessage {
+export function buildPDCStatus(args: BuildPDCStatusArgs): IKBusMessage {
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.PDC,
     args.destination ?? DEVICE_ADDRESSES.GLO,
@@ -89,7 +89,7 @@ export interface BuildPDCSensorRequestArgs {
 }
 
 /** Build a `0x1B` request asking the PDC to re-broadcast sensor distances. */
-export function buildPDCSensorRequest(args: BuildPDCSensorRequestArgs): IBusMessage {
+export function buildPDCSensorRequest(args: BuildPDCSensorRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.PDC, [
     CMD_PDC_SENSOR_REQUEST,
   ])

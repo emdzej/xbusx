@@ -1,4 +1,4 @@
-# @emdzej/ibusx-devices
+# @emdzej/ikbus-devices
 
 Device twins for the BMW I/K-bus.  Each twin is a subclass of `Device` from [`@emdzej/ibusx-core`](../core), with:
 
@@ -19,10 +19,10 @@ GM, LCM, RAD, BMBT, MID, GT, CDC, TEL twins to come.
 ## Quick example
 
 ```ts
-import { IBus, Vehicle, MemoryTransport } from '@emdzej/ibusx-core'
-import { IKE, MFL, MFLControls } from '@emdzej/ibusx-devices'
+import { IKBus, Vehicle, MemoryTransport } from '@emdzej/ibusx-core'
+import { IKE, MFL, MFLControls } from '@emdzej/ikbus-devices'
 
-const bus = new IBus(new MemoryTransport(), new Vehicle({ chassis: 'E39' }))
+const bus = new IKBus(new MemoryTransport(), new Vehicle({ chassis: 'E39' }))
 
 const ike = bus.registerDevice(new IKE())
 ike.events.on('ignitionChanged', (state) => console.log(`Ignition: ${state}`))

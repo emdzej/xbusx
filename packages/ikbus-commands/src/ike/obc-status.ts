@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_IKE_OBC_STATUS = 0x2a
@@ -40,7 +40,7 @@ const BYTE2_AUX_TIMER_2 = 0x10
 const BYTE2_AUX_VENTILATION = 0x08
 const BYTE2_AUX_TIMER_1 = 0x04
 
-export function parseIKEOBCStatus(message: IBusMessage): IKEOBCStatus {
+export function parseIKEOBCStatus(message: IKBusMessage): IKEOBCStatus {
   assertCommand(message, CMD_IKE_OBC_STATUS)
   assertPayloadLength(message, 3)
   const b1 = message.payload[1]!
@@ -72,7 +72,7 @@ export interface BuildIKEOBCStatusArgs {
   auxTimer1?: boolean
 }
 
-export function buildIKEOBCStatus(args: BuildIKEOBCStatusArgs): IBusMessage {
+export function buildIKEOBCStatus(args: BuildIKEOBCStatusArgs): IKBusMessage {
   let b1 = 0
   if (args.memo) b1 |= BYTE1_MEMO
   if (args.timer) b1 |= BYTE1_TIMER

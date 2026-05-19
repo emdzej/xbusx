@@ -1,4 +1,4 @@
-import { decode, encode } from '@emdzej/ibusx-protocol'
+import { decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { buildNAVControl, NAV_MAP_SCALE, NAV_POI, parseNAVControl } from '../../src/nav/control.js'
 

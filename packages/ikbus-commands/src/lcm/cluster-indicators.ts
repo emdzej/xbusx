@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_LCM_INDICATORS_REQUEST = 0x5a
@@ -38,7 +38,7 @@ export const INDICATOR_BITS = {
 } as const
 
 /** Parse a `0x5B` cluster-indicators broadcast. */
-export function parseClusterIndicators(message: IBusMessage): ClusterIndicators {
+export function parseClusterIndicators(message: IKBusMessage): ClusterIndicators {
   assertCommand(message, CMD_LCM_INDICATORS)
   assertMinPayloadLength(message, 2)
   const b0 = message.payload[1]!
@@ -72,7 +72,7 @@ export interface BuildClusterIndicatorsArgs {
 }
 
 /** Build a `0x5B` cluster-indicators broadcast. */
-export function buildClusterIndicators(args: BuildClusterIndicatorsArgs = {}): IBusMessage {
+export function buildClusterIndicators(args: BuildClusterIndicatorsArgs = {}): IKBusMessage {
   const b0 =
     (args.parking ? INDICATOR_BITS.PARKING : 0) |
     (args.lowBeam ? INDICATOR_BITS.LOW_BEAM : 0) |
@@ -98,7 +98,7 @@ export interface BuildClusterIndicatorsRequestArgs {
 /** Build a `0x5A` request asking the LCM to re-broadcast its cluster indicators. */
 export function buildClusterIndicatorsRequest(
   args: BuildClusterIndicatorsRequestArgs,
-): IBusMessage {
+): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.LCM, [
     CMD_LCM_INDICATORS_REQUEST,
   ])

@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -25,7 +25,7 @@ export interface IKEReplicateData {
   timeDays: number
 }
 
-export function parseIKEReplicateData(message: IBusMessage): IKEReplicateData {
+export function parseIKEReplicateData(message: IKBusMessage): IKEReplicateData {
   assertCommand(message, CMD_IKE_REPLICATE_DATA)
   assertPayloadLength(message, 9)
   const mileage = (message.payload[1]! << 8) | message.payload[2]!
@@ -59,7 +59,7 @@ export interface BuildIKEReplicateDataArgs {
  * inputs round to the nearest representable step (× 100 km for mileage,
  * × 10 L for fuel, uint16 for the rest).
  */
-export function buildIKEReplicateData(args: BuildIKEReplicateDataArgs): IBusMessage {
+export function buildIKEReplicateData(args: BuildIKEReplicateDataArgs): IKBusMessage {
   const mileageWord = Math.round(args.mileageKm / 100)
   const fuelByte = Math.round(args.fuelLitres / 10)
   if (mileageWord < 0 || mileageWord > 0xffff) {

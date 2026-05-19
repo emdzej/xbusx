@@ -1,6 +1,6 @@
-import { IBus, Vehicle } from '@emdzej/ibusx-core'
-import { addressName, type IBusMessage } from '@emdzej/ibusx-protocol'
-import { SerialTransport } from '@emdzej/ibusx-transport-serial'
+import { IKBus, Vehicle } from '@emdzej/ibusx-core'
+import { addressName, type IKBusMessage } from '@emdzej/ikbus-protocol'
+import { SerialTransport } from '@emdzej/ikbus-transport-serial'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { registerAll } from '../registry.js'
@@ -27,7 +27,7 @@ export function registerMonitorCommand(program: Command): void {
       }
 
       const transport = new SerialTransport({ path: options.port, baudRate: baud })
-      const bus = new IBus(transport, new Vehicle())
+      const bus = new IKBus(transport, new Vehicle())
       registerAll(bus)
 
       bus.events.on('frame', (msg) => onFrame(msg, options.hex === true))
@@ -60,7 +60,7 @@ export function registerMonitorCommand(program: Command): void {
     })
 }
 
-function onFrame(msg: IBusMessage, showHex: boolean): void {
+function onFrame(msg: IKBusMessage, showHex: boolean): void {
   const ts = formatTimestamp()
   const src = addressName(msg.source).padEnd(6)
   const dest = addressName(msg.destination).padEnd(6)
@@ -73,7 +73,7 @@ function onFrame(msg: IBusMessage, showHex: boolean): void {
   }
 }
 
-function attachEventLoggers(bus: IBus): void {
+function attachEventLoggers(bus: IKBus): void {
   for (const device of bus.devices) {
     interceptEmit(device.name, device.events as unknown as { emit: EmitFn })
   }

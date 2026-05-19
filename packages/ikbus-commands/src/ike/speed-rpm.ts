@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -15,7 +15,7 @@ export interface SpeedRpm {
  * Parse a `0x18` speed/RPM broadcast.  Speed is the wire byte × 2 (km/h),
  * RPM is the wire byte × 100.
  */
-export function parseSpeedRpm(message: IBusMessage): SpeedRpm {
+export function parseSpeedRpm(message: IKBusMessage): SpeedRpm {
   assertCommand(message, CMD_SPEED_RPM)
   assertPayloadLength(message, 3)
   return {
@@ -34,7 +34,7 @@ export interface BuildSpeedRpmArgs {
 }
 
 /** Build a `0x18` speed/RPM broadcast. */
-export function buildSpeedRpm(args: BuildSpeedRpmArgs): IBusMessage {
+export function buildSpeedRpm(args: BuildSpeedRpmArgs): IKBusMessage {
   if (args.kmh < 0 || args.rpm < 0) {
     throw new CommandPayloadError('Speed and RPM must be non-negative')
   }

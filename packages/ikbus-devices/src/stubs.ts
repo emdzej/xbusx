@@ -1,9 +1,9 @@
 import { Device, type EventMap } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 /**
  * Stub device base.  Used for addresses we know about but haven't yet
- * implemented full codec coverage for.  The twin still appears in the IBus
+ * implemented full codec coverage for.  The twin still appears in the IKBus
  * device registry, accepts frames addressed to its address, and can be
  * listed by CLI / TUI / web — but it has no typed state, events, or
  * controls.  Each `docs/devices/<name>.md` page documents what's currently
@@ -11,7 +11,7 @@ import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/
  */
 abstract class StubDevice extends Device<object, EventMap> {
   readonly state: Readonly<object> = {}
-  handle(_message: IBusMessage): void {
+  handle(_message: IKBusMessage): void {
     // No codec coverage yet.  See docs/devices/<name>.md.
   }
 }

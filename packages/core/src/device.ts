@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { type EventMap, TypedEmitter } from './emitter.js'
 import type { FrameSender } from './sender.js'
 import type { Vehicle } from './vehicle.js'
@@ -21,7 +21,7 @@ const BROADCAST_OR_MULTICAST = new Set<DeviceAddress>([
  *   - a `handle(message)` method that parses incoming frames
  *   - optionally a `controls` static for the reflective control surface
  *
- * Devices are attached to an `IBus` via `IBus.registerDevice()`.  That call
+ * Devices are attached to an `IKBus` via `IKBus.registerDevice()`.  That call
  * passes the shared `Vehicle` context and a `FrameSender` the device uses to
  * emit frames (when in `active` mode).
  */
@@ -40,7 +40,7 @@ export abstract class Device<TState extends object = object, TEvents extends Eve
     this.events = new TypedEmitter<TEvents>()
   }
 
-  /** Wire the device into an IBus.  Called by `IBus.registerDevice()`. */
+  /** Wire the device into an IKBus.  Called by `IKBus.registerDevice()`. */
   attach(vehicle: Vehicle, sender: FrameSender): void {
     this.vehicle = vehicle
     this.sender = sender
@@ -58,7 +58,7 @@ export abstract class Device<TState extends object = object, TEvents extends Eve
    * `GLO`/`LOC`/`ANZV` broadcast/multicast.  Subclasses can override (e.g. a
    * logger device returns `true` always).
    */
-  interestedIn(message: IBusMessage): boolean {
+  interestedIn(message: IKBusMessage): boolean {
     return (
       message.source === this.address ||
       message.destination === this.address ||
@@ -72,5 +72,5 @@ export abstract class Device<TState extends object = object, TEvents extends Eve
    * Called only when `interestedIn(message)` returned true and the device's
    * mode is not `disabled`.  Subclasses implement the parsing.
    */
-  abstract handle(message: IBusMessage): void
+  abstract handle(message: IKBusMessage): void
 }

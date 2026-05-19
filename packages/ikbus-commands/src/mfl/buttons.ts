@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -46,7 +46,7 @@ export interface MFLButtonEvent {
 }
 
 /** Parse a `0x3B` MFL button frame. */
-export function parseMFLButton(message: IBusMessage): MFLButtonEvent {
+export function parseMFLButton(message: IKBusMessage): MFLButtonEvent {
   assertCommand(message, CMD_MFL_BUTTON)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -73,7 +73,7 @@ export interface BuildMFLButtonArgs {
 }
 
 /** Build a `0x3B` MFL button frame.  Defaults source to MFL, destination to RAD. */
-export function buildMFLButton(args: BuildMFLButtonArgs): IBusMessage {
+export function buildMFLButton(args: BuildMFLButtonArgs): IKBusMessage {
   const byte = BUTTON_BITS[args.button] | STATE_BITS[args.state ?? 'PRESS']
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.MFL,

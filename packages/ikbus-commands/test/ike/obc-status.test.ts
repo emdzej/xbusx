@@ -1,4 +1,4 @@
-import { decode, encode } from '@emdzej/ibusx-protocol'
+import { decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { buildIKEOBCStatus, parseIKEOBCStatus } from '../../src/ike/obc-status.js'
 

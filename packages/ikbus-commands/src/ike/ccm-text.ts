@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -32,7 +32,7 @@ export interface IKECCMTextWrite {
  * Parse a `0x1A` IKE Check Control Module write-text frame.  The frame
  * layout is `0x1A | subcmd | 0x00 | 20 chars`.
  */
-export function parseIKECCMText(message: IBusMessage): IKECCMTextWrite {
+export function parseIKECCMText(message: IKBusMessage): IKECCMTextWrite {
   assertCommand(message, CMD_IKE_CCM_WRITE_TEXT)
   assertMinPayloadLength(message, 3)
   const sub = message.payload[1]!
@@ -67,7 +67,7 @@ export interface BuildIKECCMTextArgs {
  * Direction (BlueBus convention): PDC `0x60` → IKE `0x80`.  Other senders
  * also work in practice; the IKE doesn't filter on source.
  */
-export function buildIKECCMText(args: BuildIKECCMTextArgs): IBusMessage {
+export function buildIKECCMText(args: BuildIKECCMTextArgs): IKBusMessage {
   const kind = args.kind ?? 'persist'
   if (kind === 'clear') {
     return makeMessage(

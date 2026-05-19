@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_TEL_STATUS = 0x2c
@@ -27,7 +27,7 @@ export interface TelStatus {
 }
 
 /** Parse a `0x2C` telephone-status frame (TEL → displays multicast). */
-export function parseTelStatus(message: IBusMessage): TelStatus {
+export function parseTelStatus(message: IKBusMessage): TelStatus {
   assertCommand(message, CMD_TEL_STATUS)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -50,7 +50,7 @@ export interface BuildTelStatusArgs {
 }
 
 /** Build a `0x2C` telephone-status frame.  Defaults source to TEL, dest to ANZV. */
-export function buildTelStatus(args: BuildTelStatusArgs): IBusMessage {
+export function buildTelStatus(args: BuildTelStatusArgs): IKBusMessage {
   const byte =
     (args.handsfree ? TEL_STATUS_BITS.HANDSFREE : 0) |
     (args.establishingCall ? TEL_STATUS_BITS.ESTABLISHING_CALL : 0) |

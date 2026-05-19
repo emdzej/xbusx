@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -20,7 +20,7 @@ export const CMD_IKE_LANGUAGE_REGION = 0x15
 export function buildIKELanguageRegionRequest(args: {
   source: DeviceAddress
   destination?: DeviceAddress
-}): IBusMessage {
+}): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.IKE, [
     CMD_IKE_LANGUAGE_REGION_REQUEST,
   ])
@@ -93,7 +93,7 @@ export const IKE_CLUSTER_TYPE = {
   E85: 0xa0,
 } as const
 
-export function parseIKELanguageRegion(message: IBusMessage): IKELanguageRegion {
+export function parseIKELanguageRegion(message: IKBusMessage): IKELanguageRegion {
   assertCommand(message, CMD_IKE_LANGUAGE_REGION)
   assertPayloadLength(message, 5)
   const b1 = message.payload[1]!
@@ -158,7 +158,7 @@ export interface BuildIKELanguageRegionArgs {
   auxControllerPostPU96?: boolean
 }
 
-export function buildIKELanguageRegion(args: BuildIKELanguageRegionArgs): IBusMessage {
+export function buildIKELanguageRegion(args: BuildIKELanguageRegionArgs): IKBusMessage {
   let b1 = 0
   let b2 = 0
   let b3 = 0

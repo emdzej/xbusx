@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -33,7 +33,7 @@ export interface IKEClusterButton {
   rawByte: number
 }
 
-export function parseIKEClusterButton(message: IBusMessage): IKEClusterButton {
+export function parseIKEClusterButton(message: IKBusMessage): IKEClusterButton {
   assertCommand(message, CMD_IKE_CLUSTER_BUTTON)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -56,7 +56,7 @@ export interface BuildIKEClusterButtonArgs {
   state?: IKEClusterButtonState
 }
 
-export function buildIKEClusterButton(args: BuildIKEClusterButtonArgs): IBusMessage {
+export function buildIKEClusterButton(args: BuildIKEClusterButtonArgs): IKBusMessage {
   const value = IKE_CLUSTER_BUTTON_VALUE[args.button]
   if (value === undefined) {
     throw new CommandPayloadError(`Unknown cluster button: ${args.button}`)

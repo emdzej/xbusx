@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_VISUAL_INDICATORS = 0x76
@@ -22,7 +22,7 @@ export const VISUAL_INDICATOR_BITS = {
 } as const
 
 /** Parse a `0x76` visual-indicators frame. */
-export function parseVisualIndicators(message: IBusMessage): VisualIndicators {
+export function parseVisualIndicators(message: IKBusMessage): VisualIndicators {
   assertCommand(message, CMD_VISUAL_INDICATORS)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -41,7 +41,7 @@ export interface BuildVisualIndicatorsArgs extends Partial<VisualIndicators> {
 }
 
 /** Build a `0x76` visual-indicators frame. */
-export function buildVisualIndicators(args: BuildVisualIndicatorsArgs = {}): IBusMessage {
+export function buildVisualIndicators(args: BuildVisualIndicatorsArgs = {}): IKBusMessage {
   const byte =
     (args.hazards ? VISUAL_INDICATOR_BITS.HAZARDS : 0) |
     (args.turnSignals ? VISUAL_INDICATOR_BITS.TURN_SIGNALS : 0) |

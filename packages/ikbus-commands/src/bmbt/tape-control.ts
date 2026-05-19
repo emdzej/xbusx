@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -42,7 +42,7 @@ export interface BMBTTapeLedControl {
   command: number
 }
 
-export function parseBMBTTapeLedControl(message: IBusMessage): BMBTTapeLedControl {
+export function parseBMBTTapeLedControl(message: IKBusMessage): BMBTTapeLedControl {
   assertCommand(message, CMD_BMBT_TAPE_LED_CONTROL)
   assertPayloadLength(message, 2)
   return { command: message.payload[1]! }
@@ -54,7 +54,7 @@ export interface BuildBMBTTapeLedControlArgs {
   command: number
 }
 
-export function buildBMBTTapeLedControl(args: BuildBMBTTapeLedControlArgs): IBusMessage {
+export function buildBMBTTapeLedControl(args: BuildBMBTTapeLedControlArgs): IKBusMessage {
   if (args.command < 0 || args.command > 0xff) {
     throw new CommandPayloadError(`command 0x${args.command.toString(16)} out of byte range`)
   }

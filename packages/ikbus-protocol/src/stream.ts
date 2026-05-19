@@ -1,6 +1,6 @@
 import { IBUS_MAX_MSG_LENGTH, IBUS_RX_BUFFER_TIMEOUT_MS, MIN_FRAME_LENGTH } from './constants.js'
 import { decode } from './framing.js'
-import type { IBusMessage } from './types.js'
+import type { IKBusMessage } from './types.js'
 
 export interface FrameStreamOptions {
   /**
@@ -33,7 +33,7 @@ export class FrameStream {
    * Feed received bytes.  Returns any newly-parsed frames in the order they
    * appear.  The supplied `timestamp` is used to drive idle-timeout handling.
    */
-  feed(chunk: Uint8Array, timestamp: number = Date.now()): IBusMessage[] {
+  feed(chunk: Uint8Array, timestamp: number = Date.now()): IKBusMessage[] {
     if (chunk.length === 0) return []
     this.buffer = concat(this.buffer, chunk)
     this.lastByteAt = timestamp
@@ -65,8 +65,8 @@ export class FrameStream {
     this.lastByteAt = 0
   }
 
-  private drain(): IBusMessage[] {
-    const frames: IBusMessage[] = []
+  private drain(): IKBusMessage[] {
+    const frames: IKBusMessage[] = []
     let scan = 0
 
     while (scan + MIN_FRAME_LENGTH <= this.buffer.length) {
@@ -101,7 +101,7 @@ export class FrameStream {
     return frames
   }
 
-  private findValidFrameFrom(start: number): { message: IBusMessage; end: number } | null {
+  private findValidFrameFrom(start: number): { message: IKBusMessage; end: number } | null {
     let s = start
     while (s + MIN_FRAME_LENGTH <= this.buffer.length) {
       const lengthField = this.buffer[s + 1]!

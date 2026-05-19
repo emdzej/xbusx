@@ -1,3 +1,4 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildIgnitionRequest,
   buildIKECCMText,
@@ -57,9 +58,8 @@ import {
   type SensorsState,
   type SpeedRpm,
   type Temperature,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_IGNITION_STATUS = 0x11
 const CMD_SENSORS_STATUS = 0x13
@@ -156,7 +156,7 @@ export class IKE extends Device<IKEState, IKEEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.payload.length < 1) return
     if (message.source === this.address) {
       this.handleOutbound(message)
@@ -166,7 +166,7 @@ export class IKE extends Device<IKEState, IKEEvents> {
   }
 
   /** Frames originating at the IKE: broadcasts of state, OBC text, and replicate data. */
-  private handleOutbound(message: IBusMessage): void {
+  private handleOutbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_IGNITION_STATUS: {
@@ -247,7 +247,7 @@ export class IKE extends Device<IKEState, IKEEvents> {
    * Frames addressed *to* the IKE.  We mirror writes so consumers can observe
    * what's on the cluster, regardless of which other device sent the write.
    */
-  private handleInbound(message: IBusMessage): void {
+  private handleInbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_IKE_CCM_WRITE_TEXT: {

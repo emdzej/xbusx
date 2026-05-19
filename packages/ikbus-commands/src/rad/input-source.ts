@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -24,7 +24,7 @@ export interface RADInputSource {
   reserved: number
 }
 
-export function parseRADInputSource(message: IBusMessage): RADInputSource {
+export function parseRADInputSource(message: IKBusMessage): RADInputSource {
   assertCommand(message, CMD_RAD_INPUT_SOURCE)
   assertPayloadLength(message, 3)
   return {
@@ -40,7 +40,7 @@ export interface BuildRADInputSourceArgs {
   reserved?: number
 }
 
-export function buildRADInputSource(args: BuildRADInputSourceArgs): IBusMessage {
+export function buildRADInputSource(args: BuildRADInputSourceArgs): IKBusMessage {
   if (args.inputSource < 0 || args.inputSource > 0x01) {
     throw new CommandPayloadError(`inputSource ${args.inputSource} out of documented range 0..1`)
   }

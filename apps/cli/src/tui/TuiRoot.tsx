@@ -1,4 +1,4 @@
-import type { Device, IBus } from '@emdzej/ibusx-core'
+import type { Device, IKBus } from '@emdzej/ibusx-core'
 import { Box, Text, useApp } from 'ink'
 import { type ReactElement, useEffect, useState } from 'react'
 import type { DeviceEntry } from '../registry.js'
@@ -16,7 +16,7 @@ interface Props {
    * `<TuiRoot/>`.
    */
   attach: (port: string) => Promise<{
-    bus: IBus
+    bus: IKBus
     entries: readonly DeviceEntry[]
     // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
     devices: readonly Device<any, any>[]
@@ -29,7 +29,7 @@ type Stage =
   | {
       phase: 'ready'
       port: string
-      bus: IBus
+      bus: IKBus
       entries: readonly DeviceEntry[]
       devices: readonly Device<object, never>[]
     }

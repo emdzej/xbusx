@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -9,7 +9,7 @@ export const CMD_ODOMETER_STATUS = 0x17
  * Parse a `0x17` odometer broadcast.  The mileage is a 3-byte little-endian
  * unsigned integer in kilometres (max ~16.7M km).
  */
-export function parseOdometer(message: IBusMessage): number {
+export function parseOdometer(message: IKBusMessage): number {
   assertCommand(message, CMD_ODOMETER_STATUS)
   assertMinPayloadLength(message, 4)
   const lo = message.payload[1]!
@@ -32,7 +32,7 @@ export interface BuildOdometerArgs {
 }
 
 /** Build a `0x17` odometer broadcast. */
-export function buildOdometer(args: BuildOdometerArgs): IBusMessage {
+export function buildOdometer(args: BuildOdometerArgs): IKBusMessage {
   if (args.km < 0 || args.km > 0xffffff) {
     throw new CommandPayloadError(`Odometer ${args.km} km out of range (0..${0xffffff})`)
   }
@@ -54,6 +54,6 @@ export interface BuildOdometerRequestArgs {
 }
 
 /** Build a `0x16` request asking the IKE to broadcast its odometer. */
-export function buildOdometerRequest(args: BuildOdometerRequestArgs): IBusMessage {
+export function buildOdometerRequest(args: BuildOdometerRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.IKE, [CMD_ODOMETER_REQUEST])
 }

@@ -1,3 +1,4 @@
+import { type ChassisType, type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildDoorsRequest,
   buildZKE3LockRequest,
@@ -11,9 +12,8 @@ import {
   type VisualIndicators,
   ZKE3_JOBS,
   ZKE5_JOBS,
-} from '@emdzej/ibusx-commands'
-import { type ChassisType, type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_REMOTE_KEY = 0x72
 const CMD_VISUAL_INDICATORS = 0x76
@@ -60,7 +60,7 @@ export class GM extends Device<GMState, GMEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.source !== this.address) return
     if (message.payload.length < 1) return
     const cmd = message.payload[0]

@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_GT_OBC_INPUT = 0x40
@@ -72,7 +72,7 @@ export interface OBCInput {
 }
 
 /** Parse a `0x40` OBC-input frame. */
-export function parseOBCInput(message: IBusMessage): OBCInput {
+export function parseOBCInput(message: IKBusMessage): OBCInput {
   assertCommand(message, CMD_GT_OBC_INPUT)
   assertMinPayloadLength(message, 2)
   const rawId = message.payload[1]!
@@ -91,7 +91,7 @@ export interface BuildOBCInputArgs {
 }
 
 /** Build a `0x40` OBC-input frame.  Defaults source to GT, dest to IKE. */
-export function buildOBCInput(args: BuildOBCInputArgs): IBusMessage {
+export function buildOBCInput(args: BuildOBCInputArgs): IKBusMessage {
   const id =
     typeof args.property === 'number'
       ? args.property & 0xff
@@ -127,7 +127,7 @@ export interface OBCControl {
 }
 
 /** Parse a `0x41` OBC-control frame. */
-export function parseOBCControl(message: IBusMessage): OBCControl {
+export function parseOBCControl(message: IKBusMessage): OBCControl {
   assertCommand(message, CMD_GT_OBC_CONTROL)
   assertMinPayloadLength(message, 3)
   const rawId = message.payload[1]!
@@ -152,7 +152,7 @@ export interface BuildOBCControlArgs {
 }
 
 /** Build a `0x41` OBC-control frame.  Defaults source to GT, dest to IKE. */
-export function buildOBCControl(args: BuildOBCControlArgs): IBusMessage {
+export function buildOBCControl(args: BuildOBCControlArgs): IKBusMessage {
   const id =
     typeof args.property === 'number'
       ? args.property & 0xff

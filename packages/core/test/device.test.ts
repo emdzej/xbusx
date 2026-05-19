@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { Device } from '../src/device.js'
 import type { FrameSender } from '../src/sender.js'
@@ -11,7 +11,7 @@ class TestDevice extends Device<{ frames: number }, { hit: number }> {
   get state(): Readonly<{ frames: number }> {
     return this._state
   }
-  handle(_message: IBusMessage): void {
+  handle(_message: IKBusMessage): void {
     this._state.frames += 1
     this.events.emit('hit', this._state.frames)
   }
@@ -25,7 +25,7 @@ class TestDevice extends Device<{ frames: number }, { hit: number }> {
 
 const stubSender: FrameSender = { send: async () => {} }
 
-function makeMessage(source: number, destination: number): IBusMessage {
+function makeMessage(source: number, destination: number): IKBusMessage {
   return { source, destination, payload: new Uint8Array([0x11]), checksum: 0 }
 }
 

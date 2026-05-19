@@ -1,8 +1,8 @@
-import type { DeviceAddress, IBusMessage } from '@emdzej/ibusx-protocol'
+import type { DeviceAddress, IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandMismatchError, CommandPayloadError } from './errors.js'
 
 /** Throw if the message's command byte (payload[0]) does not match `expected`. */
-export function assertCommand(message: IBusMessage, expected: number): void {
+export function assertCommand(message: IKBusMessage, expected: number): void {
   if (message.payload.length < 1) {
     throw new CommandPayloadError('Empty payload — expected at least a command byte')
   }
@@ -13,7 +13,7 @@ export function assertCommand(message: IBusMessage, expected: number): void {
 }
 
 /** Throw if the payload is not exactly `expected` bytes long. */
-export function assertPayloadLength(message: IBusMessage, expected: number): void {
+export function assertPayloadLength(message: IKBusMessage, expected: number): void {
   if (message.payload.length !== expected) {
     throw new CommandPayloadError(
       `Expected payload length ${expected}, got ${message.payload.length}`,
@@ -22,7 +22,7 @@ export function assertPayloadLength(message: IBusMessage, expected: number): voi
 }
 
 /** Throw if the payload is shorter than `min` bytes. */
-export function assertMinPayloadLength(message: IBusMessage, min: number): void {
+export function assertMinPayloadLength(message: IKBusMessage, min: number): void {
   if (message.payload.length < min) {
     throw new CommandPayloadError(
       `Expected at least ${min} payload bytes, got ${message.payload.length}`,
@@ -31,14 +31,14 @@ export function assertMinPayloadLength(message: IBusMessage, min: number): void 
 }
 
 /**
- * Build an IBusMessage from parts.  `checksum` is set to 0 (filled in by the
+ * Build an IKBusMessage from parts.  `checksum` is set to 0 (filled in by the
  * protocol encoder before transmission).
  */
 export function makeMessage(
   source: DeviceAddress,
   destination: DeviceAddress,
   payload: ReadonlyArray<number> | Uint8Array,
-): IBusMessage {
+): IKBusMessage {
   return {
     source,
     destination,

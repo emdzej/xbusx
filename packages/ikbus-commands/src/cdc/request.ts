@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -44,7 +44,7 @@ export interface CDCRequest {
 }
 
 /** Parse a `0x38` CDC request frame (radio → CDC). */
-export function parseCDCRequest(message: IBusMessage): CDCRequest {
+export function parseCDCRequest(message: IKBusMessage): CDCRequest {
   assertCommand(message, CMD_CDC_REQUEST)
   assertMinPayloadLength(message, 3)
   const subByte = message.payload[1]!
@@ -66,7 +66,7 @@ export interface BuildCDCRequestArgs {
 }
 
 /** Build a `0x38` CDC request frame. */
-export function buildCDCRequest(args: BuildCDCRequestArgs): IBusMessage {
+export function buildCDCRequest(args: BuildCDCRequestArgs): IKBusMessage {
   let subByte: number
   if (typeof args.subcommand === 'number') {
     subByte = args.subcommand & 0xff

@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -42,7 +42,7 @@ function bcdHighNibble(b: number): number {
   return n
 }
 
-export function parseNAVTelematicsCoordinates(message: IBusMessage): NAVTelematicsCoordinates {
+export function parseNAVTelematicsCoordinates(message: IKBusMessage): NAVTelematicsCoordinates {
   assertCommand(message, CMD_NAV_TELEMATICS_COORDINATES)
   assertPayloadLength(message, 18)
   const signal = message.payload[1] === 0x01
@@ -91,7 +91,7 @@ export interface NAVTelematicsLocation {
   address: string
 }
 
-export function parseNAVTelematicsLocation(message: IBusMessage): NAVTelematicsLocation {
+export function parseNAVTelematicsLocation(message: IKBusMessage): NAVTelematicsLocation {
   assertCommand(message, CMD_NAV_TELEMATICS_LOCATION)
   // 1 cmd + 1 unknown + 1 type + 30 string = 33
   assertPayloadLength(message, 33)
@@ -113,7 +113,7 @@ export interface BuildNAVTelematicsLocationArgs {
   address: string
 }
 
-export function buildNAVTelematicsLocation(args: BuildNAVTelematicsLocationArgs): IBusMessage {
+export function buildNAVTelematicsLocation(args: BuildNAVTelematicsLocationArgs): IKBusMessage {
   if (args.address.length > 29) {
     throw new CommandPayloadError(`Address must be ≤ 29 characters (got ${args.address.length})`)
   }

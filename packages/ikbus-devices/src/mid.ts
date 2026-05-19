@@ -1,6 +1,6 @@
-import { buildMIDButton, type MIDButtonEvent, parseMIDButton } from '@emdzej/ibusx-commands'
 import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { buildMIDButton, type MIDButtonEvent, parseMIDButton } from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_BUTTON = 0x31
 
@@ -26,7 +26,7 @@ export class MID extends Device<MIDState, MIDEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.source !== this.address) return
     if (message.payload[0] !== CMD_BUTTON) return
     const evt = parseMIDButton(message)

@@ -1,12 +1,12 @@
-import { DEVICE_ADDRESSES, encode, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, encode, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { Device } from '../src/device.js'
 import { DuplicateDeviceError } from '../src/errors.js'
-import { IBus } from '../src/ibus.js'
+import { IKBus } from '../src/ikbus.js'
 import { MemoryTransport } from '../src/memory-transport.js'
 import { Vehicle } from '../src/vehicle.js'
 
-class CountingDevice extends Device<{ count: number }, { hit: IBusMessage }> {
+class CountingDevice extends Device<{ count: number }, { hit: IKBusMessage }> {
   readonly address: number
   readonly name = 'TEST'
   private _state = { count: 0 }
@@ -17,7 +17,7 @@ class CountingDevice extends Device<{ count: number }, { hit: IBusMessage }> {
   get state() {
     return this._state
   }
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     this._state.count += 1
     this.events.emit('hit', message)
   }
@@ -39,16 +39,16 @@ const igFrame = encode({
   checksum: 0,
 })
 
-describe('IBus', () => {
+describe('IKBus', () => {
   it('registers a device and exposes it via device()', () => {
-    const bus = new IBus(new MemoryTransport())
+    const bus = new IKBus(new MemoryTransport())
     const ike = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
     expect(bus.device(DEVICE_ADDRESSES.IKE)).toBe(ike)
     expect(bus.devices).toContain(ike)
   })
 
   it('throws DuplicateDeviceError when the same address is registered twice', () => {
-    const bus = new IBus(new MemoryTransport())
+    const bus = new IKBus(new MemoryTransport())
     bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
     expect(() => bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))).toThrow(
       DuplicateDeviceError,
@@ -57,7 +57,7 @@ describe('IBus', () => {
 
   it('passes the shared Vehicle to each registered device', () => {
     const vehicle = new Vehicle({ chassis: 'E39' })
-    const bus = new IBus(new MemoryTransport(), vehicle)
+    const bus = new IKBus(new MemoryTransport(), vehicle)
     const ike = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
     const lcm = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.LCM))
     // We can't reach the protected field directly; verify the vehicle is the
@@ -68,7 +68,7 @@ describe('IBus', () => {
 
   it('dispatches inbound frames to interested devices, emits frame event', async () => {
     const transport = new MemoryTransport()
-    const bus = new IBus(transport)
+    const bus = new IKBus(transport)
     const ike = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
     const rad = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.RAD))
 
@@ -88,7 +88,7 @@ describe('IBus', () => {
 
   it('skips devices in disabled mode', async () => {
     const transport = new MemoryTransport()
-    const bus = new IBus(transport)
+    const bus = new IKBus(transport)
     const ike = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
     const rad = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.RAD))
     rad.mode = 'disabled'
@@ -104,7 +104,7 @@ describe('IBus', () => {
 
   it('emits error when a device handler throws — but other devices still run', async () => {
     const transport = new MemoryTransport()
-    const bus = new IBus(transport)
+    const bus = new IKBus(transport)
     const crash = bus.registerDevice(new CrashingDevice())
     const ike = bus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
 
@@ -125,8 +125,8 @@ describe('IBus', () => {
 
   it('send() encodes and writes the frame to the transport', async () => {
     const [a, b] = MemoryTransport.pair()
-    const aBus = new IBus(a)
-    const bBus = new IBus(b)
+    const aBus = new IKBus(a)
+    const bBus = new IKBus(b)
     const bIke = bBus.registerDevice(new CountingDevice(DEVICE_ADDRESSES.IKE))
 
     await aBus.start()
@@ -153,7 +153,7 @@ describe('IBus', () => {
   })
 
   it('start()/stop() are idempotent', async () => {
-    const bus = new IBus(new MemoryTransport())
+    const bus = new IKBus(new MemoryTransport())
     await bus.start()
     await bus.start()
     await bus.stop()

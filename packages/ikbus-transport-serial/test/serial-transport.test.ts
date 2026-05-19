@@ -1,5 +1,5 @@
 import { TransportNotOpenError } from '@emdzej/ibusx-core'
-import { IBUS_BAUD_RATE } from '@emdzej/ibusx-protocol'
+import { IBUS_BAUD_RATE } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { SerialTransport } from '../src/serial-transport.js'
 

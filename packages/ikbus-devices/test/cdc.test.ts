@@ -1,14 +1,14 @@
-import { buildCDCRequest, type CDCStatus, parseCDCStatus } from '@emdzej/ibusx-commands'
-import { IBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ibusx-protocol'
+import { IKBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
+import { buildCDCRequest, type CDCStatus, parseCDCStatus } from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { CDC, CDCControls } from '../src/cdc.js'
 
 async function setupCDC() {
   const [a, b] = MemoryTransport.pair()
   const vehicle = new Vehicle()
-  const cdcBus = new IBus(a, vehicle)
-  const radBus = new IBus(b, vehicle)
+  const cdcBus = new IKBus(a, vehicle)
+  const radBus = new IKBus(b, vehicle)
   const cdc = cdcBus.registerDevice(new CDC())
   cdc.mode = 'active'
   await cdcBus.start()
@@ -21,7 +21,7 @@ async function flush(): Promise<void> {
 }
 
 async function injectRadioRequest(
-  cdcBus: IBus,
+  cdcBus: IKBus,
   destinationTransport: MemoryTransport,
   subcommand: CDCStatus extends never ? never : Parameters<typeof buildCDCRequest>[0]['subcommand'],
   param = 0,

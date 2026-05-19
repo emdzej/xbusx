@@ -1,4 +1,4 @@
-import type { ControlsManifest, Device, IBus } from '@emdzej/ibusx-core'
+import type { ControlsManifest, Device, IKBus } from '@emdzej/ibusx-core'
 import {
   ALC,
   ALWR,
@@ -67,7 +67,7 @@ import {
   TEL,
   TELControls,
   VID,
-} from '@emdzej/ibusx-devices'
+} from '@emdzej/ikbus-devices'
 
 /**
  * A device entry — its constructor, the controls manifest it exposes, a
@@ -154,7 +154,7 @@ export const DEVICE_REGISTRY: readonly DeviceEntry[] = [
  * arrays of entries and the freshly-registered instances so callers can read
  * state from them later.
  */
-export function registerAll(bus: IBus): {
+export function registerAll(bus: IKBus): {
   entries: readonly DeviceEntry[]
   // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
   devices: readonly Device<any, any>[]

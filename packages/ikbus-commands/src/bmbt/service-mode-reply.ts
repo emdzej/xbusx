@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import {
   assertCommand,
@@ -23,7 +23,7 @@ export interface BMBTServiceReply {
   data: Uint8Array
 }
 
-export function parseBMBTServiceReply(message: IBusMessage): BMBTServiceReply {
+export function parseBMBTServiceReply(message: IKBusMessage): BMBTServiceReply {
   assertCommand(message, CMD_BMBT_SERVICE_REPLY)
   assertMinPayloadLength(message, 2)
   return { data: message.payload.slice(1) }
@@ -35,7 +35,7 @@ export interface BuildBMBTServiceReplyArgs {
   data: ReadonlyArray<number> | Uint8Array
 }
 
-export function buildBMBTServiceReply(args: BuildBMBTServiceReplyArgs): IBusMessage {
+export function buildBMBTServiceReply(args: BuildBMBTServiceReplyArgs): IKBusMessage {
   const dataBytes = Array.from(args.data)
   if (dataBytes.length === 0) {
     throw new CommandPayloadError('Service-mode reply requires at least one data byte')
@@ -91,7 +91,7 @@ function bcd(byte: number): number {
  * preceding request was `0x05 0x00`.  Throws if the payload doesn't have
  * the expected 17 bytes.
  */
-export function parseBMBTIdentReply(message: IBusMessage): BMBTIdentReply {
+export function parseBMBTIdentReply(message: IKBusMessage): BMBTIdentReply {
   assertCommand(message, CMD_BMBT_SERVICE_REPLY)
   assertPayloadLength(message, 17)
   return {
@@ -156,7 +156,7 @@ export interface BMBTKeyFunctionReply {
  * Caller must know the preceding request was `0x05 0x0B 0x01`.
  * Frame: `[0x06, keyByte, obmSensor, radioSensor]`.
  */
-export function parseBMBTKeyFunctionReply(message: IBusMessage): BMBTKeyFunctionReply {
+export function parseBMBTKeyFunctionReply(message: IKBusMessage): BMBTKeyFunctionReply {
   assertCommand(message, CMD_BMBT_SERVICE_REPLY)
   assertPayloadLength(message, 4)
   return {
@@ -176,7 +176,7 @@ export interface BMBTBrightnessReply {
  * Decode a `0x06` reply as the current brightness value.  Caller must
  * know the preceding request was `0x05 0x40 0x01`.  Frame: `[0x06, value]`.
  */
-export function parseBMBTBrightnessReply(message: IBusMessage): BMBTBrightnessReply {
+export function parseBMBTBrightnessReply(message: IKBusMessage): BMBTBrightnessReply {
   assertCommand(message, CMD_BMBT_SERVICE_REPLY)
   assertPayloadLength(message, 2)
   return { rawByte: message.payload[1]! }

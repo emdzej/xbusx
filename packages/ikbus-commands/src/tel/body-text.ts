@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 import {
@@ -45,7 +45,7 @@ export interface TELBodyText {
   data: Uint8Array
 }
 
-export function parseTELBodyText(message: IBusMessage): TELBodyText {
+export function parseTELBodyText(message: IKBusMessage): TELBodyText {
   assertCommand(message, CMD_TEL_BODY_TEXT)
   assertMinPayloadLength(message, 5)
   const offsetRaw = message.payload[2]!
@@ -75,7 +75,7 @@ export interface BuildTELBodyTextArgs {
   data: Uint8Array | ReadonlyArray<number>
 }
 
-export function buildTELBodyText(args: BuildTELBodyTextArgs): IBusMessage {
+export function buildTELBodyText(args: BuildTELBodyTextArgs): IKBusMessage {
   const layout = args.layout ?? TEL_BODY_LAYOUT_DETAIL
   if (layout < 0 || layout > 0xff) {
     throw new CommandPayloadError(`layout 0x${layout.toString(16)} out of byte range`)

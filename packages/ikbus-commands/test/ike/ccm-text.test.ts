@@ -1,4 +1,4 @@
-import { decode, encode } from '@emdzej/ibusx-protocol'
+import { decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { CommandPayloadError } from '../../src/errors.js'
 import { buildIKECCMText, IKE_CCM_TEXT_LENGTH, parseIKECCMText } from '../../src/ike/ccm-text.js'

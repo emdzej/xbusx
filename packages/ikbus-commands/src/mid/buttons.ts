@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_MID_BUTTON_PRESS = 0x31
@@ -16,7 +16,7 @@ export interface MIDButtonEvent {
 }
 
 /** Parse a `0x31` MID button-press frame. */
-export function parseMIDButton(message: IBusMessage): MIDButtonEvent {
+export function parseMIDButton(message: IKBusMessage): MIDButtonEvent {
   assertCommand(message, CMD_MID_BUTTON_PRESS)
   assertMinPayloadLength(message, 2)
   return {
@@ -33,7 +33,7 @@ export interface BuildMIDButtonArgs {
 }
 
 /** Build a `0x31` MID button-press frame.  Defaults source to MID, dest to RAD. */
-export function buildMIDButton(args: BuildMIDButtonArgs): IBusMessage {
+export function buildMIDButton(args: BuildMIDButtonArgs): IKBusMessage {
   const data = args.data ?? []
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.MID,

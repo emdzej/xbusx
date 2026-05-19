@@ -26,7 +26,7 @@ type EventListener<T> = T extends void ? () => void : (payload: T) => void
  *
  * Listener exceptions are caught and silently swallowed so one bad listener
  * does not break the dispatch loop.  For application-level error reporting
- * use a dedicated `error` event on the relevant emitter (e.g. `IBus.events`).
+ * use a dedicated `error` event on the relevant emitter (e.g. `IKBus.events`).
  */
 export class TypedEmitter<E extends EventMap> {
   // biome-ignore lint/suspicious/noExplicitAny: internal storage type

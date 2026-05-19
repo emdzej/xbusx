@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -94,7 +94,7 @@ export interface SensorsState {
  * the IKI 7-byte extended payload.  The `isIki` flag on the returned state
  * indicates which variant produced it.
  */
-export function parseSensors(message: IBusMessage): SensorsState {
+export function parseSensors(message: IKBusMessage): SensorsState {
   assertCommand(message, CMD_SENSORS_STATUS)
   assertMinPayloadLength(message, 4) // cmd + 3 bytes
   const len = message.payload.length
@@ -154,7 +154,7 @@ export interface BuildSensorsArgs {
 }
 
 /** Build a `0x13` sensor broadcast (IKE 3-byte payload). */
-export function buildSensors(args: BuildSensorsArgs = {}): IBusMessage {
+export function buildSensors(args: BuildSensorsArgs = {}): IKBusMessage {
   const b1 =
     (args.handbrake ? 0x01 : 0) |
     (args.oilPressureFault ? 0x02 : 0) |
@@ -176,6 +176,6 @@ export interface BuildSensorsRequestArgs {
 }
 
 /** Build a `0x12` request asking the IKE to re-broadcast its sensor frame. */
-export function buildSensorsRequest(args: BuildSensorsRequestArgs): IBusMessage {
+export function buildSensorsRequest(args: BuildSensorsRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.IKE, [CMD_SENSORS_REQUEST])
 }

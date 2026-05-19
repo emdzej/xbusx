@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { buildCDCStatus, parseCDCStatus } from '../../src/cdc/status.js'
 

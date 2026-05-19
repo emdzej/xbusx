@@ -1,6 +1,6 @@
-import { buildKeyStatusRequest, type KeyStatus, parseKeyStatus } from '@emdzej/ibusx-commands'
 import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { buildKeyStatusRequest, type KeyStatus, parseKeyStatus } from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_KEY_STATUS = 0x74
 
@@ -22,7 +22,7 @@ export class EWS extends Device<EWSState, EWSEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.source !== this.address) return
     if (message.payload[0] !== CMD_KEY_STATUS) return
     const keyStatus = parseKeyStatus(message)

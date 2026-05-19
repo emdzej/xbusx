@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_EWS_KEY_REQUEST = 0x73
@@ -14,7 +14,7 @@ export interface KeyStatus {
 }
 
 /** Parse a `0x74` key-status frame from EWS. */
-export function parseKeyStatus(message: IBusMessage): KeyStatus {
+export function parseKeyStatus(message: IKBusMessage): KeyStatus {
   assertCommand(message, CMD_EWS_KEY_STATUS)
   assertMinPayloadLength(message, 1)
   return { rawBytes: message.payload.slice(1) }
@@ -27,7 +27,7 @@ export interface BuildKeyStatusArgs {
 }
 
 /** Build a `0x74` key-status frame. */
-export function buildKeyStatus(args: BuildKeyStatusArgs = {}): IBusMessage {
+export function buildKeyStatus(args: BuildKeyStatusArgs = {}): IKBusMessage {
   const bytes = args.rawBytes ?? []
   return makeMessage(
     args.source ?? DEVICE_ADDRESSES.EWS,
@@ -42,6 +42,6 @@ export interface BuildKeyStatusRequestArgs {
 }
 
 /** Build a `0x73` key-status request frame. */
-export function buildKeyStatusRequest(args: BuildKeyStatusRequestArgs): IBusMessage {
+export function buildKeyStatusRequest(args: BuildKeyStatusRequestArgs): IKBusMessage {
   return makeMessage(args.source, args.destination ?? DEVICE_ADDRESSES.EWS, [CMD_EWS_KEY_REQUEST])
 }

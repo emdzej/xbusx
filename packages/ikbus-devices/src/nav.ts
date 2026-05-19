@@ -1,3 +1,4 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildGPSTime,
   buildNAVControl,
@@ -18,9 +19,8 @@ import {
   parseNAVTelematicsCoordinates,
   parseNAVTelematicsLocation,
   parseNAVViewStatus,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 /**
  * Snapshot of the navigation computer's state, accumulated from its
@@ -77,7 +77,7 @@ export class NAV extends Device<NAVState, NAVEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.payload.length < 1) return
     if (message.source === this.address) {
       this.handleOutbound(message)
@@ -86,7 +86,7 @@ export class NAV extends Device<NAVState, NAVEvents> {
     }
   }
 
-  private handleOutbound(message: IBusMessage): void {
+  private handleOutbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_GPS_TIME: {
@@ -116,7 +116,7 @@ export class NAV extends Device<NAVState, NAVEvents> {
     }
   }
 
-  private handleInbound(message: IBusMessage): void {
+  private handleInbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     if (cmd === CMD_NAV_CONTROL) {
       const c = parseNAVControl(message)

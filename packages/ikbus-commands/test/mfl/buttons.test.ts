@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { CommandPayloadError } from '../../src/errors.js'
 import { buildMFLButton, parseMFLButton } from '../../src/mfl/buttons.js'

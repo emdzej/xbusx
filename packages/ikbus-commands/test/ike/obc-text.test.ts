@@ -1,4 +1,4 @@
-import { decode, encode } from '@emdzej/ibusx-protocol'
+import { decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it } from 'vitest'
 import { CommandPayloadError } from '../../src/errors.js'
 import { buildIKEOBCText, IKE_OBC_PROPERTY, parseIKEOBCText } from '../../src/ike/obc-text.js'

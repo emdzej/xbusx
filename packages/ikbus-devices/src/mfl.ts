@@ -1,12 +1,12 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   type ButtonState,
   buildMFLButton,
   buildVolume,
   type MFLButton,
   type VolumeDirection,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 /** Which downstream device button events route to.  Toggled by the R/T button. */
 export type MFLRouting = 'RAD' | 'TEL'
@@ -38,7 +38,7 @@ export class MFL extends Device<MFLState, MFLEvents> {
     return this._state
   }
 
-  handle(_message: IBusMessage): void {
+  handle(_message: IKBusMessage): void {
     // MFL is input-only on the bus.  Nothing to update from inbound frames.
   }
 

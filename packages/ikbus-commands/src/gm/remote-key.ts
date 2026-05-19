@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_REMOTE_KEY = 0x72
@@ -22,7 +22,7 @@ export interface RemoteKeyEvent {
 }
 
 /** Parse a `0x72` remote-key-entry broadcast.  Action lives in the upper nibble of DB1. */
-export function parseRemoteKey(message: IBusMessage): RemoteKeyEvent {
+export function parseRemoteKey(message: IKBusMessage): RemoteKeyEvent {
   assertCommand(message, CMD_REMOTE_KEY)
   assertMinPayloadLength(message, 2)
   const rawNibble = (message.payload[1]! >> 4) & 0x0f
@@ -39,7 +39,7 @@ export interface BuildRemoteKeyArgs {
 }
 
 /** Build a `0x72` remote-key-entry frame.  Unknown actions emit `0x00`. */
-export function buildRemoteKey(args: BuildRemoteKeyArgs): IBusMessage {
+export function buildRemoteKey(args: BuildRemoteKeyArgs): IKBusMessage {
   const nibble = args.action === 'LOCK' ? 0x01 : args.action === 'UNLOCK' ? 0x02 : 0x00
   return makeMessage(args.source ?? DEVICE_ADDRESSES.GM, args.destination ?? DEVICE_ADDRESSES.GLO, [
     CMD_REMOTE_KEY,

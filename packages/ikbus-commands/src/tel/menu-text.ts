@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -72,7 +72,7 @@ export interface TELMenuText {
   data: Uint8Array
 }
 
-export function parseTELMenuText(message: IBusMessage): TELMenuText {
+export function parseTELMenuText(message: IKBusMessage): TELMenuText {
   assertCommand(message, CMD_TEL_MENU_TEXT)
   // Need at least cmd + layout + function + options = 4 bytes.  Some
   // frames (e.g. Wilhelm's DIAL "C8 06 3B 21 42 02 20 B4") have no
@@ -126,7 +126,7 @@ export interface BuildTELMenuTextArgs {
   data: Uint8Array | ReadonlyArray<number>
 }
 
-export function buildTELMenuText(args: BuildTELMenuTextArgs): IBusMessage {
+export function buildTELMenuText(args: BuildTELMenuTextArgs): IKBusMessage {
   if (args.layout < 0 || args.layout > 0xff) {
     throw new CommandPayloadError(`layout 0x${args.layout.toString(16)} out of byte range`)
   }
@@ -171,7 +171,7 @@ export function buildTELMenuTextFromFields(args: {
   buffer?: boolean
   highlight?: boolean
   fields: ReadonlyArray<string>
-}): IBusMessage {
+}): IKBusMessage {
   const bytes: number[] = []
   args.fields.forEach((s, i) => {
     if (i > 0) bytes.push(0x06)

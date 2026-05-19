@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_BMBT_MONITOR_CONTROL = 0x4f
@@ -26,7 +26,7 @@ export interface MonitorControl {
 }
 
 /** Parse a `0x4F` monitor-control frame.  Byte 2 is optional. */
-export function parseMonitorControl(message: IBusMessage): MonitorControl {
+export function parseMonitorControl(message: IKBusMessage): MonitorControl {
   assertCommand(message, CMD_BMBT_MONITOR_CONTROL)
   assertMinPayloadLength(message, 2)
   const b1 = message.payload[1]!
@@ -60,7 +60,7 @@ export interface BuildMonitorControlArgs {
 }
 
 /** Build a `0x4F` monitor-control frame.  Defaults source to GT, dest to BMBT. */
-export function buildMonitorControl(args: BuildMonitorControlArgs): IBusMessage {
+export function buildMonitorControl(args: BuildMonitorControlArgs): IKBusMessage {
   const sourceBits =
     args.videoSource === 'TV'
       ? 0x01

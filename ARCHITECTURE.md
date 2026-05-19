@@ -53,7 +53,7 @@ packages/
                            # terminate-diagnostic.  Mirrors the
                            # parseX/buildX pattern from `commands/`.
 
-  core/                    # IBus orchestrator — UNCHANGED.
+  core/                    # IKBus orchestrator — UNCHANGED.
 
   dbus/                    # NEW.  Session-oriented runtime for D-Bus:
                            # DiagSession (open/close, send-and-wait,
@@ -78,13 +78,13 @@ packages/
 ### What we DO NOT do
 
 - **No `Frame` superclass / discriminated union** spanning both bus
-  types in `protocol/`. The I/K-bus `IBusMessage` and the D-Bus
+  types in `protocol/`. The I/K-bus `IKBusMessage` and the D-Bus
   `DBusMessage` are sibling types in the same package; nothing
   attempts to abstract over them. Code that processes both protocols
-  switches at the API boundary (`IBus` vs. `DiagSession`), not via a
+  switches at the API boundary (`IKBus` vs. `DiagSession`), not via a
   polymorphic `Frame.kind` field.
-- **No `protocol: 'ikbus' | 'dbus'` argument on `IBus.send`** or
-  similar generalisation. The existing `IBus` continues to be
+- **No `protocol: 'ikbus' | 'dbus'` argument on `IKBus.send`** or
+  similar generalisation. The existing `IKBus` continues to be
   I/K-bus-only.
 - **No event-emitter API on `DiagECU`.** Diagnostic ECUs don't
   broadcast; pretending they do (via a fake event for every response
@@ -96,7 +96,7 @@ packages/
 
 ```ts
 // I/K-bus — broadcast / reactive
-const bus = new IBus(transport, vehicle)
+const bus = new IKBus(transport, vehicle)
 const { devices } = registerAll(bus)
 await bus.start()
 const ike = bus.device(0x80) as IKE
@@ -122,8 +122,8 @@ Add **`diag`** as a third option:
 
 | Mode | Bus class | Wire behaviour |
 |---|---|---|
-| `passive` | `IBus` | I/K-bus listen-only |
-| `active` | `IBus` | I/K-bus listen + send (safety-gated) |
+| `passive` | `IKBus` | I/K-bus listen-only |
+| `active` | `IKBus` | I/K-bus listen + send (safety-gated) |
 | `diag` | `DiagSession` | D-Bus request/response (safety-gated; coding writes are far more consequential than an active-mode I/K-bus button-press) |
 
 CLI:
@@ -186,7 +186,7 @@ entries are fine; three-page essays are not.
 Examples of what *would* belong here later:
 
 - TX timing layer / ARQ retry policy (multi-package: affects
-  `core/IBus.send`, transports, and the active-mode safety story).
+  `core/IKBus.send`, transports, and the active-mode safety story).
 - Gateway server (`transports/gateway-client` + a Node server app —
   one bus, multiple clients).
 - Vehicle-profile persistence and how it interacts with the

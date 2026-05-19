@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_RAD_SCREEN_MODE = 0x46
@@ -32,7 +32,7 @@ export interface ScreenMode {
 }
 
 /** Parse a `0x46` screen-mode update from the radio. */
-export function parseScreenMode(message: IBusMessage): ScreenMode {
+export function parseScreenMode(message: IKBusMessage): ScreenMode {
   assertCommand(message, CMD_RAD_SCREEN_MODE)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -60,7 +60,7 @@ export interface BuildScreenModeArgs {
 }
 
 /** Build a `0x46` screen-mode update from the radio. */
-export function buildScreenMode(args: BuildScreenModeArgs): IBusMessage {
+export function buildScreenMode(args: BuildScreenModeArgs): IKBusMessage {
   let byte: number
   if (args.rawByte !== undefined) {
     byte = args.rawByte & 0xff

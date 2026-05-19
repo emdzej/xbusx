@@ -1,12 +1,12 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildCDCStatus,
   type CDCFunction,
   type CDCRequest,
   type CDCStatus,
   parseCDCRequest,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_CDC_REQUEST = 0x38
 
@@ -58,7 +58,7 @@ export class CDC extends Device<CDCEmulatorState, CDCEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.destination !== this.address) return
     if (message.payload.length < 1) return
     if (message.payload[0] !== CMD_CDC_REQUEST) return
@@ -68,7 +68,7 @@ export class CDC extends Device<CDCEmulatorState, CDCEvents> {
 
     if (this.mode !== 'active') return
     this.applyRequest(request)
-    // Fire-and-forget — IBus.send returns a promise the caller can await,
+    // Fire-and-forget — IKBus.send returns a promise the caller can await,
     // but here we don't have anything to do with it.
     void this.broadcastStatus()
   }

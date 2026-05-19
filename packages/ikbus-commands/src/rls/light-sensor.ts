@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_RLS_LIGHT_SENSOR = 0x59
@@ -29,7 +29,7 @@ export interface LightSensorState {
 }
 
 /** Parse a `0x59` light-sensor status frame (RLS → LCM). */
-export function parseLightSensor(message: IBusMessage): LightSensorState {
+export function parseLightSensor(message: IKBusMessage): LightSensorState {
   assertCommand(message, CMD_RLS_LIGHT_SENSOR)
   assertPayloadLength(message, 3)
   const b1 = message.payload[1]!
@@ -59,7 +59,7 @@ export interface BuildLightSensorArgs {
 }
 
 /** Build a `0x59` light-sensor frame.  Defaults source to RLS, dest to LCM. */
-export function buildLightSensor(args: BuildLightSensorArgs = {}): IBusMessage {
+export function buildLightSensor(args: BuildLightSensorArgs = {}): IKBusMessage {
   const intensity = Math.max(0, Math.min(6, args.intensity ?? 1))
   const b1 = (intensity << 4) | (args.lightsOn ? 0x01 : 0)
   const b2 = (args.reasons ?? []).reduce((acc, r) => acc | LIGHT_REASON_BITS[r], 0)

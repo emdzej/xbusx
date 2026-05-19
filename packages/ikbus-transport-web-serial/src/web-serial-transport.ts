@@ -4,7 +4,7 @@ import {
   TransportNotOpenError,
   TypedEmitter,
 } from '@emdzej/ibusx-core'
-import { IBUS_BAUD_RATE } from '@emdzej/ibusx-protocol'
+import { IBUS_BAUD_RATE } from '@emdzej/ikbus-protocol'
 
 export interface WebSerialTransportOptions {
   /**

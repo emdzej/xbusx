@@ -1,5 +1,5 @@
-import type { Device, IBus } from '@emdzej/ibusx-core'
-import { addressName } from '@emdzej/ibusx-protocol'
+import type { Device, IKBus } from '@emdzej/ibusx-core'
+import { addressName } from '@emdzej/ikbus-protocol'
 import { LOG_CAPACITY, type LogEntry, nextLogId } from './log.js'
 
 type EmitFn = (event: string, payload?: unknown) => boolean
@@ -10,7 +10,7 @@ type EmitFn = (event: string, payload?: unknown) => boolean
  * — useful for tests / hot reload.
  */
 export function attachBusListeners(
-  bus: IBus,
+  bus: IKBus,
   // biome-ignore lint/suspicious/noExplicitAny: heterogeneous device generics
   devices: readonly Device<any, any>[],
   onLog: (entry: LogEntry) => void,

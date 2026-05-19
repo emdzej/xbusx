@@ -19,11 +19,11 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
-    "@emdzej/ibusx-commands": "workspace:*",
+    "@emdzej/ikbus-commands": "workspace:*",
     "@emdzej/ibusx-core": "workspace:*",
-    "@emdzej/ibusx-devices": "workspace:*",
-    "@emdzej/ibusx-protocol": "workspace:*",
-    "@emdzej/ibusx-transport-serial": "workspace:*",
+    "@emdzej/ikbus-devices": "workspace:*",
+    "@emdzej/ikbus-protocol": "workspace:*",
+    "@emdzej/ikbus-transport-serial": "workspace:*",
     "@inkjs/ui": "^2.0.0",
     "commander": "^14.0.3",
     "ink": "^7.0.3",

@@ -1,3 +1,4 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   type BMBTButtonState,
   type BMBTHardButton,
@@ -23,9 +24,8 @@ import {
   parseBMBTSoftButton,
   parseBMBTTapeLedControl,
   parseNavDial,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_SOFT_BUTTONS = 0x47
 const CMD_HARD_BUTTONS = 0x48
@@ -73,7 +73,7 @@ export class BMBT extends Device<BMBTState, BMBTEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.payload.length < 1) return
     if (message.source === this.address) {
       this.handleOutbound(message)
@@ -82,7 +82,7 @@ export class BMBT extends Device<BMBTState, BMBTEvents> {
     }
   }
 
-  private handleOutbound(message: IBusMessage): void {
+  private handleOutbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_HARD_BUTTONS: {
@@ -112,7 +112,7 @@ export class BMBT extends Device<BMBTState, BMBTEvents> {
     }
   }
 
-  private handleInbound(message: IBusMessage): void {
+  private handleInbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_BMBT_SERVICE_REQUEST: {

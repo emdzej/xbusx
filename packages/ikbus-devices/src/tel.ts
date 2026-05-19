@@ -1,3 +1,4 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   buildTELBodyText,
   buildTELDirectDial,
@@ -21,9 +22,8 @@ import {
   type TELSMSIcon,
   type TelLEDFrame,
   type TelStatus,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_LED = 0x2b
 const CMD_STATUS = 0x2c
@@ -71,7 +71,7 @@ export class TEL extends Device<TELState, TELEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.payload.length < 1) return
     if (message.source === this.address) {
       this.handleOutbound(message)
@@ -80,7 +80,7 @@ export class TEL extends Device<TELState, TELEvents> {
     }
   }
 
-  private handleOutbound(message: IBusMessage): void {
+  private handleOutbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_LED: {
@@ -116,7 +116,7 @@ export class TEL extends Device<TELState, TELEvents> {
     }
   }
 
-  private handleInbound(message: IBusMessage): void {
+  private handleInbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     if (cmd === CMD_TEL_DIRECT_DIAL) {
       const d = parseTELDirectDial(message)

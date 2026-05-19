@@ -1,5 +1,5 @@
 {
-  "name": "@emdzej/ibusx-transport-web-serial",
+  "name": "@emdzej/ikbus-transport-web-serial",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@emdzej/ibusx-core": "workspace:*",
-    "@emdzej/ibusx-protocol": "workspace:*"
+    "@emdzej/ikbus-protocol": "workspace:*"
   },
   "devDependencies": {
     "@emdzej/ibusx-tsconfig": "workspace:*",

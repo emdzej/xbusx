@@ -14,7 +14,7 @@ This page consolidates the protocol's failure modes — how a malformed frame, a
 | **RX overflow** | Buffer reaches `IBUS_RX_BUFFER_SIZE - 1` (254 bytes). | `ERR_TMO[<count>]`. | Buffer flushed. Same recovery. |
 | **Collision during TX** | RX line goes busy mid-frame while transmitting. | `ERR_COL`. | TX aborted; receiver continues; sender backs off via `IBUS_TX_FRAME_IDLE_WAIT`. |
 | **Missed loopback** | Transmitted frame not echoed back to RX within `IBUS_TX_LOOPBACK_TIMEOUT` (790 ms). | `ERR_RTX[<n>]` where `n` is the retry count. | Retry up to 3 times; then drop frame. |
-| **TX buffer overflow** | Sender's ring buffer has all 23 usable slots full. | `IBus: TX Buffer Overflow.` | Frame discarded by sender; never reaches the wire. |
+| **TX buffer overflow** | Sender's ring buffer has all 23 usable slots full. | `IKBus: TX Buffer Overflow.` | Frame discarded by sender; never reaches the wire. |
 
 > *Sources:* BlueBus `ibus.c:1100–1186` for the runtime paths; `ibus.c:1214–1217` for TX buffer-overflow handling.
 
@@ -37,8 +37,8 @@ Because the slide-and-retry can land on any byte boundary, a malformed frame wil
 If the RX buffer holds bytes but no new byte has arrived within `IBUS_RX_BUFFER_TIMEOUT` (71 ms), the buffer is dumped and cleared. A typical log line:
 
 ```
-[12345678] ERROR: IBus: RX Buffer Timeout [4]: 80 04 BF 11
-IBus: ERR_TMO[4]
+[12345678] ERROR: IKBus: RX Buffer Timeout [4]: 80 04 BF 11
+IKBus: ERR_TMO[4]
 ```
 
 (BlueBus's log format from `ibus.c:1154–1166`.)
@@ -60,7 +60,7 @@ for (idx = 0; idx < msgLen; idx++) {
         txTimeout = IBUS_TX_TIMEOUT_ON;
         ibus->txLastStamp = TimerGetMillis();
         if (idx > 0) {
-            LogRaw("IBus: ERR_COL\r\n");
+            LogRaw("IKBus: ERR_COL\r\n");
         }
         break;
     }
@@ -97,7 +97,7 @@ If the application tries to queue a frame and the ring buffer's used-slot count 
 
 ```c
 if (usedSlots >= IBUS_TX_BUFFER_SIZE - 1) {
-    LogRaw("[%llu] ERROR: IBus: TX Buffer Overflow.\r\n", ts);
+    LogRaw("[%llu] ERROR: IKBus: TX Buffer Overflow.\r\n", ts);
     return;
 }
 ```
@@ -144,8 +144,8 @@ For grepping a real-vehicle capture or BlueBus debug log:
 | `ERR_TMO[<count>]` | RX timeout — buffer flushed with `<count>` bytes left over. |
 | `ERR_COL` | Collision detected mid-TX after ≥ 1 byte sent. |
 | `ERR_RTX[<n>]` | TX retry attempt `<n>` (1, 2, or 3) for the current slot. |
-| `IBus: TX Buffer Overflow` | Application queued too fast; new frame dropped before reaching the wire. |
-| `IBus: Refuse to transmit frame of length <N>` | Application tried to send a frame with `N ≥ IBUS_MAX_MSG_LENGTH`. |
+| `IKBus: TX Buffer Overflow` | Application queued too fast; new frame dropped before reaching the wire. |
+| `IKBus: Refuse to transmit frame of length <N>` | Application tried to send a frame with `N ≥ IBUS_MAX_MSG_LENGTH`. |
 
 ---
 

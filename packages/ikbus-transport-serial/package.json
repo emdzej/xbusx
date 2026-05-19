@@ -1,5 +1,5 @@
 {
-  "name": "@emdzej/ibusx-transport-serial",
+  "name": "@emdzej/ikbus-transport-serial",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@emdzej/ibusx-core": "workspace:*",
-    "@emdzej/ibusx-protocol": "workspace:*",
+    "@emdzej/ikbus-protocol": "workspace:*",
     "serialport": "^13.0.0"
   },
   "devDependencies": {

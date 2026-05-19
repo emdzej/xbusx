@@ -50,7 +50,7 @@ const VARIANT_KEYS: ReadonlyArray<keyof VehicleVariants> = ['ike', 'gm', 'lcm', 
 /**
  * Shared mutable state about the car that crosses device boundaries.
  *
- * A `Vehicle` is created once and passed to one or more `IBus` instances
+ * A `Vehicle` is created once and passed to one or more `IKBus` instances
  * (on K+I chassis, two IBuses share a single Vehicle).  Devices read it to
  * dispatch correctly (e.g. ZKE3 vs ZKE5 lock commands) and write to it when
  * they discover new information (e.g. the IKE writes its variant on detect).

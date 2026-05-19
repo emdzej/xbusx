@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -90,7 +90,7 @@ export interface BMBTHardButtonEvent {
 }
 
 /** Parse a `0x48` BMBT hard-button event. */
-export function parseBMBTHardButton(message: IBusMessage): BMBTHardButtonEvent {
+export function parseBMBTHardButton(message: IKBusMessage): BMBTHardButtonEvent {
   assertCommand(message, CMD_BMBT_HARD_BUTTONS)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -116,7 +116,7 @@ export interface BuildBMBTHardButtonArgs {
 }
 
 /** Build a `0x48` BMBT hard-button frame.  Defaults source to BMBT, dest to GT. */
-export function buildBMBTHardButton(args: BuildBMBTHardButtonArgs): IBusMessage {
+export function buildBMBTHardButton(args: BuildBMBTHardButtonArgs): IKBusMessage {
   const buttonId =
     typeof args.button === 'number' ? args.button & ID_MASK : BMBT_HARD_BUTTON_IDS[args.button]
   const state = BMBT_STATE_BITS[args.state ?? 'PRESS']
@@ -146,7 +146,7 @@ export interface BMBTSoftButtonEvent {
 }
 
 /** Parse a `0x47` BMBT soft-button event.  Soft buttons are widescreen-only. */
-export function parseBMBTSoftButton(message: IBusMessage): BMBTSoftButtonEvent {
+export function parseBMBTSoftButton(message: IKBusMessage): BMBTSoftButtonEvent {
   assertCommand(message, CMD_BMBT_SOFT_BUTTONS)
   assertPayloadLength(message, 2)
   const byte = message.payload[1]!
@@ -171,7 +171,7 @@ export interface BuildBMBTSoftButtonArgs {
 }
 
 /** Build a `0x47` BMBT soft-button frame.  Defaults dest to LOC broadcast. */
-export function buildBMBTSoftButton(args: BuildBMBTSoftButtonArgs): IBusMessage {
+export function buildBMBTSoftButton(args: BuildBMBTSoftButtonArgs): IKBusMessage {
   const id = BMBT_SOFT_BUTTON_MASKS[args.button]
   const state = BMBT_STATE_BITS[args.state ?? 'PRESS']
   return makeMessage(

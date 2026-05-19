@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
 export const CMD_RAD_TITLE_TEXT = 0x23
@@ -21,7 +21,7 @@ export interface TitleText {
 }
 
 /** Parse a `0x23` title-text frame (radio / telephone → display). */
-export function parseTitleText(message: IBusMessage): TitleText {
+export function parseTitleText(message: IKBusMessage): TitleText {
   assertCommand(message, CMD_RAD_TITLE_TEXT)
   assertMinPayloadLength(message, 3)
   const layoutByte = message.payload[1]!
@@ -45,7 +45,7 @@ export interface BuildTitleTextArgs {
 }
 
 /** Build a `0x23` title-text frame.  Defaults source to RAD, destination to GT. */
-export function buildTitleText(args: BuildTitleTextArgs): IBusMessage {
+export function buildTitleText(args: BuildTitleTextArgs): IKBusMessage {
   let textBytes: ReadonlyArray<number> | Uint8Array
   if (args.rawTextBytes !== undefined) {
     textBytes = args.rawTextBytes

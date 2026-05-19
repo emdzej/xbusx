@@ -1,3 +1,4 @@
+import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
 import {
   type BMBTServiceReply,
   type BMBTServiceRequest,
@@ -22,9 +23,8 @@ import {
   parseOBCInput,
   parseSetRadioUI,
   type SetRadioUI,
-} from '@emdzej/ibusx-commands'
-import { type ControlsManifest, Device } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, type IBusMessage } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, type IKBusMessage } from '@emdzej/ikbus-protocol'
 
 const CMD_OBC_INPUT = 0x40
 const CMD_OBC_CONTROL = 0x41
@@ -71,7 +71,7 @@ export class GT extends Device<GTState, GTEvents> {
     return this._state
   }
 
-  handle(message: IBusMessage): void {
+  handle(message: IKBusMessage): void {
     if (message.payload.length < 1) return
     if (message.source === this.address) {
       this.handleOutbound(message)
@@ -80,7 +80,7 @@ export class GT extends Device<GTState, GTEvents> {
     }
   }
 
-  private handleOutbound(message: IBusMessage): void {
+  private handleOutbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     switch (cmd) {
       case CMD_SET_RADIO_UI: {
@@ -116,7 +116,7 @@ export class GT extends Device<GTState, GTEvents> {
     }
   }
 
-  private handleInbound(message: IBusMessage): void {
+  private handleInbound(message: IKBusMessage): void {
     const cmd = message.payload[0]
     if (cmd === CMD_BMBT_SERVICE_REPLY) {
       const reply = parseBMBTServiceReply(message)

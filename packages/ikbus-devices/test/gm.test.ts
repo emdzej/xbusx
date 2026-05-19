@@ -1,20 +1,20 @@
+import { IKBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
 import {
   buildDoorsStatus,
   parseCDCRequest,
   parseDoorsStatus,
   ZKE3_JOBS,
   ZKE5_JOBS,
-} from '@emdzej/ibusx-commands'
-import { IBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, decode, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { GM, GMControls } from '../src/gm.js'
 
 async function setupGM(chassis?: 'E39' | 'E46') {
   const [tx, rx] = MemoryTransport.pair()
   const vehicle = new Vehicle(chassis !== undefined ? { chassis } : {})
-  const txBus = new IBus(tx, vehicle)
-  const rxBus = new IBus(rx, vehicle)
+  const txBus = new IKBus(tx, vehicle)
+  const rxBus = new IKBus(rx, vehicle)
   const gm = txBus.registerDevice(new GM())
   gm.mode = 'active'
   await txBus.start()

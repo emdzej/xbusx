@@ -6,17 +6,17 @@ import {
   FrameTooLargeError,
   FrameTooSmallError,
 } from './errors.js'
-import type { IBusMessage } from './types.js'
+import type { IKBusMessage } from './types.js'
 
 /**
- * Serialise an IBusMessage to wire bytes:
+ * Serialise an IKBusMessage to wire bytes:
  *
  *   SRC | LEN | DST | payload... | XOR
  *
  * where LEN = payload.length + 2.  The `checksum` field of the input is
  * ignored — a fresh XOR is computed.
  */
-export function encode(message: IBusMessage): Uint8Array {
+export function encode(message: IKBusMessage): Uint8Array {
   const payloadLength = message.payload.length
   const totalLength = payloadLength + 4
   if (totalLength > IBUS_MAX_MSG_LENGTH) {
@@ -38,7 +38,7 @@ export function encode(message: IBusMessage): Uint8Array {
  * Parse a single complete frame.  Throws on malformed input — for streaming
  * use prefer `FrameStream`, which tolerates resynchronisation.
  */
-export function decode(bytes: Uint8Array): IBusMessage {
+export function decode(bytes: Uint8Array): IKBusMessage {
   if (bytes.length < MIN_FRAME_LENGTH) {
     throw new FrameTooSmallError(bytes.length)
   }

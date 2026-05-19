@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -47,7 +47,7 @@ export interface IKEOBCRemoteConfig {
 
 export const IKE_OBC_REMOTE_CONFIG_SLOTS = 12
 
-export function parseIKEOBCRemoteConfig(message: IBusMessage): IKEOBCRemoteConfig {
+export function parseIKEOBCRemoteConfig(message: IKBusMessage): IKEOBCRemoteConfig {
   assertCommand(message, CMD_IKE_OBC_REMOTE_CONFIG)
   // 1 byte command + 12 bytes data = 13-byte payload
   assertPayloadLength(message, 1 + IKE_OBC_REMOTE_CONFIG_SLOTS)
@@ -64,7 +64,7 @@ export interface BuildIKEOBCRemoteConfigArgs {
   slots: ReadonlyArray<number>
 }
 
-export function buildIKEOBCRemoteConfig(args: BuildIKEOBCRemoteConfigArgs): IBusMessage {
+export function buildIKEOBCRemoteConfig(args: BuildIKEOBCRemoteConfigArgs): IKBusMessage {
   if (args.slots.length > IKE_OBC_REMOTE_CONFIG_SLOTS) {
     throw new CommandPayloadError(
       `Too many slots (${args.slots.length}); max ${IKE_OBC_REMOTE_CONFIG_SLOTS}`,

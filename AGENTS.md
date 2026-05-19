@@ -34,12 +34,12 @@ docs/                                 # Markdown reference manual
   ...
 
 packages/
-  protocol/                           # @emdzej/ibusx-protocol  — framing, addresses, checksum
-  commands/                           # @emdzej/ibusx-commands  — per-command codecs (parseX / buildX)
-  core/                               # @emdzej/ibusx-core      — IBus, Vehicle, Device, TypedEmitter, MemoryTransport
-  devices/                            # @emdzej/ibusx-devices   — typed device twins + stubs.ts (~40 placeholders)
-  transport-serial/                   # @emdzej/ibusx-transport-serial      — Node serialport adapter
-  transport-web-serial/               # @emdzej/ibusx-transport-web-serial  — browser Web Serial adapter
+  protocol/                           # @emdzej/ikbus-protocol  — framing, addresses, checksum
+  commands/                           # @emdzej/ikbus-commands  — per-command codecs (parseX / buildX)
+  core/                               # @emdzej/ibusx-core      — IKBus, Vehicle, Device, TypedEmitter, MemoryTransport
+  devices/                            # @emdzej/ikbus-devices   — typed device twins + stubs.ts (~40 placeholders)
+  transport-serial/                   # @emdzej/ikbus-transport-serial      — Node serialport adapter
+  transport-web-serial/               # @emdzej/ikbus-transport-web-serial  — browser Web Serial adapter
 
 apps/
   cli/                                # @emdzej/ibusx-cli       — single `ibusx` bin (Commander + Ink TUI embedded)
@@ -64,7 +64,7 @@ pnpm build       # turbo: tsc -p tsconfig.build.json + vite build for web
 pnpm exec biome check --write .   # format + lint (svelte files excluded)
 
 # Filtered:
-pnpm --filter @emdzej/ibusx-protocol test
+pnpm --filter @emdzej/ikbus-protocol test
 pnpm --filter @emdzej/ibusx-web dev          # http://localhost:5173 (needs Chromium for Web Serial)
 node apps/cli/dist/bin/ibusx.js --help
 ```
@@ -171,8 +171,8 @@ devices; `devices` doesn't know about transports.
 
 ### 5.2 Two-layer event model
 
-- **Wire layer** (`IBus.events`): `frame`, `txFrame`, `error`. Every
-  parsed/sent IBusMessage.
+- **Wire layer** (`IKBus.events`): `frame`, `txFrame`, `error`. Every
+  parsed/sent IKBusMessage.
 - **Semantic layer** (`Device.events`): per-device typed events like
   `ignitionChanged`, `lockAll`, `volumeUp`. Defined by each device's
   `EventMap`.
@@ -264,7 +264,7 @@ Organised by device subdirectory. To add a new command, see §8.
 
 ## 7. Known gaps (next-up candidates)
 
-- **TX timing layer** — `IBus.send()` writes straight to the transport. The
+- **TX timing layer** — `IKBus.send()` writes straight to the transport. The
   documented 8 ms idle wait + ARQ retries (`docs/protocol/link-and-timing.md`)
   isn't implemented yet.
 - **Active-mode arming UX** — there's no scoped/temporary arm; once
@@ -289,8 +289,8 @@ Organised by device subdirectory. To add a new command, see §8.
 1. Find the command's spec by chasing the source-precedence chain
    (BlueBus → Wilhelm → bimmerz). Pick a directory under
    `packages/commands/src/<device>/` and add `<command-name>.ts`.
-2. Pattern: export `parseX(message: IBusMessage): X` and
-   `buildX(args): IBusMessage`. Use the helpers in
+2. Pattern: export `parseX(message: IKBusMessage): X` and
+   `buildX(args): IKBusMessage`. Use the helpers in
    `packages/commands/src/internal.ts` (`assertCommand`,
    `assertMinPayloadLength`, `makeMessage`). Throw `ProtocolError`
    subclasses for bad input.

@@ -1,4 +1,4 @@
-import { type DeviceAddress, encode, FrameStream, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { type DeviceAddress, encode, FrameStream, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import type { Device } from './device.js'
 import { TypedEmitter } from './emitter.js'
 import { DuplicateDeviceError } from './errors.js'
@@ -8,10 +8,10 @@ import { Vehicle } from './vehicle.js'
 
 export type IBusEvents = {
   /** Every successfully-parsed inbound frame. */
-  frame: IBusMessage
-  /** Every frame this IBus emitted (after enqueue, before transport.write). */
-  txFrame: IBusMessage
-  /** Transport, parser, or handler errors.  IBus catches handler exceptions
+  frame: IKBusMessage
+  /** Every frame this IKBus emitted (after enqueue, before transport.write). */
+  txFrame: IKBusMessage
+  /** Transport, parser, or handler errors.  IKBus catches handler exceptions
    *  so a single bad device can't crash the dispatch loop. */
   error: Error
 }
@@ -22,10 +22,10 @@ export type IBusEvents = {
  * `FrameSender` they use to emit frames back.  Owns a `Vehicle` for shared
  * cross-device state.
  *
- * One `IBus` instance per physical bus.  On K+I chassis, create two and pass
+ * One `IKBus` instance per physical bus.  On K+I chassis, create two and pass
  * them the same `Vehicle`.
  */
-export class IBus implements FrameSender {
+export class IKBus implements FrameSender {
   readonly transport: Transport
   readonly vehicle: Vehicle
   readonly events: TypedEmitter<IBusEvents>
@@ -72,7 +72,7 @@ export class IBus implements FrameSender {
    * TX queue yet.  Real serial transports will need a queue layer added (see
    * `docs/protocol/link-and-timing.md` for the 8 ms idle wait / ARQ rules).
    */
-  async send(message: IBusMessage): Promise<void> {
+  async send(message: IKBusMessage): Promise<void> {
     this.events.emit('txFrame', message)
     await this.transport.write(encode(message))
   }
@@ -107,7 +107,7 @@ export class IBus implements FrameSender {
     this.events.emit('error', err)
   }
 
-  private dispatchFrame(message: IBusMessage): void {
+  private dispatchFrame(message: IKBusMessage): void {
     this.events.emit('frame', message)
     for (const device of this.devicesList) {
       if (device.mode === 'disabled') continue

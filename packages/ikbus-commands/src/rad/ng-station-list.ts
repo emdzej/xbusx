@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -62,7 +62,7 @@ export interface RADNGStationList {
   entries: RADNGStationListEntry[]
 }
 
-export function parseRADNGStationList(message: IBusMessage): RADNGStationList {
+export function parseRADNGStationList(message: IKBusMessage): RADNGStationList {
   assertCommand(message, CMD_RAD_NG_STATION_LIST)
   const msgType = message.payload[1] ?? 0
 
@@ -121,7 +121,7 @@ export function parseRADNGStationList(message: IBusMessage): RADNGStationList {
 export function buildRADNGStationAck(args: {
   source?: DeviceAddress
   destination?: DeviceAddress
-}): IBusMessage {
+}): IKBusMessage {
   // Wilhelm: 3B 04 68 D4 02 — 2-byte payload, just the msgType.
   return makeMessage(args.source ?? DEVICE_ADDRESSES.GT, args.destination ?? DEVICE_ADDRESSES.RAD, [
     CMD_RAD_NG_STATION_LIST,
@@ -133,7 +133,7 @@ export function buildRADNGStationSet(args: {
   source?: DeviceAddress
   destination?: DeviceAddress
   station: number
-}): IBusMessage {
+}): IKBusMessage {
   if (args.station < 0 || args.station > 0xff) {
     throw new CommandPayloadError(`station ${args.station} out of byte range`)
   }
@@ -151,7 +151,7 @@ export function buildRADNGStationListChunk(args: {
   totalStationCount: number
   msgIndex: number
   entries: ReadonlyArray<RADNGStationListEntry>
-}): IBusMessage {
+}): IKBusMessage {
   if (args.entries.length > 3) {
     throw new CommandPayloadError(`Max 3 stations per chunk (got ${args.entries.length})`)
   }

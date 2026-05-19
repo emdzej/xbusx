@@ -1,18 +1,18 @@
-# @emdzej/ibusx-transport-serial
+# @emdzej/ikbus-transport-serial
 
-Node-side serial transport for `@emdzej/ibusx-core`.  Wraps [`serialport`](https://serialport.io) v13 with the I/K-bus defaults (9600 baud, 8 data bits, even parity, 1 stop bit) and exposes the `Transport` interface that `IBus` consumes.
+Node-side serial transport for `@emdzej/ibusx-core`.  Wraps [`serialport`](https://serialport.io) v13 with the I/K-bus defaults (9600 baud, 8 data bits, even parity, 1 stop bit) and exposes the `Transport` interface that `IKBus` consumes.
 
 ## Quick start
 
 ```ts
-import { IBus, Vehicle } from '@emdzej/ibusx-core'
-import { SerialTransport, listSerialPorts } from '@emdzej/ibusx-transport-serial'
+import { IKBus, Vehicle } from '@emdzej/ibusx-core'
+import { SerialTransport, listSerialPorts } from '@emdzej/ikbus-transport-serial'
 
 console.log(await listSerialPorts())
 // → [ { path: '/dev/ttyUSB0', manufacturer: 'FTDI', ... }, ... ]
 
 const transport = new SerialTransport({ path: '/dev/ttyUSB0' })
-const bus = new IBus(transport, new Vehicle({ chassis: 'E39' }))
+const bus = new IKBus(transport, new Vehicle({ chassis: 'E39' }))
 await bus.start()
 ```
 
@@ -20,7 +20,7 @@ The constructor accepts overrides for any of `baudRate` / `dataBits` / `parity` 
 
 ## Hardware
 
-You need a transceiver that converts the single-wire 12 V I/K-bus to UART TTL.  The Melexis TH3122 is the canonical chip; many off-the-shelf USB-to-IBus adapters use it.  Tap point is typically the OBD-II port (chassis-dependent pinout).
+You need a transceiver that converts the single-wire 12 V I/K-bus to UART TTL.  The Melexis TH3122 is the canonical chip; many off-the-shelf USB-to-IKBus adapters use it.  Tap point is typically the OBD-II port (chassis-dependent pinout).
 
 See [`docs/protocol/physical.md`](../../docs/protocol/physical.md) for more on the physical layer.
 

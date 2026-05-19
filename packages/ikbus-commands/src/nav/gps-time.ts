@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertPayloadLength, makeMessage } from '../internal.js'
 
@@ -68,7 +68,7 @@ function decimalToBcd(value: number, fieldName: string): number {
 }
 
 /** Parse a `0x1F` GPS time frame.  Total payload length is exactly 9 bytes. */
-export function parseGPSTime(message: IBusMessage): GPSTime {
+export function parseGPSTime(message: IKBusMessage): GPSTime {
   assertCommand(message, CMD_GPS_TIME)
   assertPayloadLength(message, 9)
   const flagsRaw = message.payload[1]!
@@ -110,7 +110,7 @@ export interface BuildGPSTimeArgs {
  * example (`0x40` and `0x00`).  Override only if you have evidence they
  * carry meaning on the chassis you're targeting.
  */
-export function buildGPSTime(args: BuildGPSTimeArgs): IBusMessage {
+export function buildGPSTime(args: BuildGPSTimeArgs): IKBusMessage {
   if (args.year < 0 || args.year > 9999) {
     throw new CommandPayloadError(`Year ${args.year} out of 4-digit range`)
   }

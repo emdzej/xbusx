@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES } from '@emdzej/ikbus-protocol'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { DEVICE_REGISTRY } from '../registry.js'

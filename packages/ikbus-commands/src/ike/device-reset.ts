@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -29,7 +29,7 @@ export interface IKEDeviceReset {
   data: Uint8Array
 }
 
-export function parseIKEDeviceReset(message: IBusMessage): IKEDeviceReset {
+export function parseIKEDeviceReset(message: IKBusMessage): IKEDeviceReset {
   assertCommand(message, CMD_DEVICE_RESET)
   assertMinPayloadLength(message, 2)
   const data = message.payload.slice(1)
@@ -51,7 +51,7 @@ export interface BuildIKEDeviceResetArgs {
   data?: ReadonlyArray<number> | Uint8Array
 }
 
-export function buildIKEDeviceReset(args: BuildIKEDeviceResetArgs = {}): IBusMessage {
+export function buildIKEDeviceReset(args: BuildIKEDeviceResetArgs = {}): IKBusMessage {
   const data = args.data ? Array.from(args.data) : [0x00]
   if (data.length === 0) {
     throw new CommandPayloadError('0x1C requires at least one data byte')

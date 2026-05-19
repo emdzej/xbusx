@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -37,7 +37,7 @@ export interface BMBTServiceRequest {
  * GT (`0x3B`) → BMBT (`0xF0`).  Returns the raw property byte plus the
  * trailing data bytes for the caller to interpret per the property.
  */
-export function parseBMBTServiceRequest(message: IBusMessage): BMBTServiceRequest {
+export function parseBMBTServiceRequest(message: IKBusMessage): BMBTServiceRequest {
   assertCommand(message, CMD_BMBT_SERVICE_REQUEST)
   assertMinPayloadLength(message, 2)
   const property = message.payload[1]!
@@ -54,7 +54,7 @@ export interface BuildBMBTServiceRequestArgs {
 }
 
 /** Build a `0x05` BMBT Service-Mode Request frame. */
-export function buildBMBTServiceRequest(args: BuildBMBTServiceRequestArgs): IBusMessage {
+export function buildBMBTServiceRequest(args: BuildBMBTServiceRequestArgs): IKBusMessage {
   if (args.property < 0 || args.property > 0xff) {
     throw new CommandPayloadError(`Property ID 0x${args.property.toString(16)} out of byte range`)
   }

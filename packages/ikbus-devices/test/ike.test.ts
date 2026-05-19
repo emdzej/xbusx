@@ -1,3 +1,4 @@
+import { IKBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
 import {
   buildGPSTime,
   buildIgnitionStatus,
@@ -9,16 +10,15 @@ import {
   buildSpeedRpm,
   IKE_NUMERIC_X1,
   IKE_OBC_PROPERTY,
-} from '@emdzej/ibusx-commands'
-import { IBus, MemoryTransport, Vehicle } from '@emdzej/ibusx-core'
-import { DEVICE_ADDRESSES, encode } from '@emdzej/ibusx-protocol'
+} from '@emdzej/ikbus-commands'
+import { DEVICE_ADDRESSES, encode } from '@emdzej/ikbus-protocol'
 import { describe, expect, it, vi } from 'vitest'
 import { IKE, IKEControls } from '../src/ike.js'
 
 async function setup() {
   const transport = new MemoryTransport()
   const vehicle = new Vehicle({ chassis: 'E39' })
-  const bus = new IBus(transport, vehicle)
+  const bus = new IKBus(transport, vehicle)
   const ike = bus.registerDevice(new IKE())
   await bus.start()
   return { transport, vehicle, bus, ike }

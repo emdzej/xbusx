@@ -1,4 +1,4 @@
-import { DEVICE_ADDRESSES, type DeviceAddress, type IBusMessage } from '@emdzej/ibusx-protocol'
+import { DEVICE_ADDRESSES, type DeviceAddress, type IKBusMessage } from '@emdzej/ikbus-protocol'
 import { CommandPayloadError } from '../errors.js'
 import { assertCommand, assertMinPayloadLength, makeMessage } from '../internal.js'
 
@@ -39,7 +39,7 @@ export interface IKEOBCTextFrame {
  * Parse a `0x24` OBC-text broadcast from IKE → displays.  Frame layout
  * is `0x24 | propertyId | 0x00 | <ASCII text...>`.
  */
-export function parseIKEOBCText(message: IBusMessage): IKEOBCTextFrame {
+export function parseIKEOBCText(message: IKBusMessage): IKEOBCTextFrame {
   assertCommand(message, CMD_IKE_OBC_TEXT)
   assertMinPayloadLength(message, 3)
   const propertyId = message.payload[1]!
@@ -65,7 +65,7 @@ export interface BuildIKEOBCTextArgs {
  * Build a `0x24` OBC-text broadcast.  Default direction: IKE → display
  * multicast (`ANZV` 0xE7).
  */
-export function buildIKEOBCText(args: BuildIKEOBCTextArgs): IBusMessage {
+export function buildIKEOBCText(args: BuildIKEOBCTextArgs): IKBusMessage {
   if (args.propertyId < 0 || args.propertyId > 0xff) {
     throw new CommandPayloadError(`Property ID ${args.propertyId} out of byte range`)
   }
