@@ -1,11 +1,9 @@
 <script lang="ts">
-import type { Device } from '@emdzej/ibusx-core'
-import type { DeviceEntry } from '../registry.js'
+import type { DisplayableDevice, DisplayableEntry } from '../types.js'
 
 interface Props {
-  entries: readonly DeviceEntry[]
-  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
-  devices: readonly Device<any, any>[]
+  entries: readonly DisplayableEntry[]
+  devices: readonly DisplayableDevice[]
   selectedIndex: number
   onSelect: (index: number) => void
 }

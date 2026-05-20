@@ -1,11 +1,14 @@
 <script lang="ts">
+import type { Protocol } from '../storage.js'
+
 interface Props {
   baudRate: number
+  protocol: Protocol
   error: string | undefined
   onConnect: (port: SerialPort) => void | Promise<void>
 }
 
-let { baudRate = $bindable(), error, onConnect }: Props = $props()
+let { baudRate = $bindable(), protocol = $bindable(), error, onConnect }: Props = $props()
 let busy = $state(false)
 
 async function pick(): Promise<void> {
@@ -15,7 +18,6 @@ async function pick(): Promise<void> {
     const port = await navigator.serial.requestPort()
     await onConnect(port)
   } catch (err) {
-    // User cancelled or denied — surface only real failures via parent's error.
     if (err instanceof Error && err.name !== 'NotFoundError') {
       throw err
     }
@@ -27,13 +29,27 @@ async function pick(): Promise<void> {
 
 <div class="screen">
   <div class="card">
-    <h2>Connect to a BMW I/K-bus</h2>
+    <h2>Connect</h2>
     <p class="muted">
-      The browser will prompt you to pick a serial port.  Best results with a 9600-baud 8E1
-      FTDI adapter tapped onto the single-wire K-bus or I-bus line.
+      The browser will prompt you to pick a serial port. Both buses share the same 9600 8E1
+      wire; pick which protocol the adapter is currently tapping.
     </p>
 
-    <label>
+    <fieldset class="protocol">
+      <legend>Protocol</legend>
+      <label>
+        <input type="radio" bind:group={protocol} value="ikbus" />
+        <span class="proto-name">I/K-bus</span>
+        <span class="proto-hint">single-wire body/comfort bus — passive broadcast observation</span>
+      </label>
+      <label>
+        <input type="radio" bind:group={protocol} value="dbus" />
+        <span class="proto-name">D-bus (DS2)</span>
+        <span class="proto-hint">OBD-II diagnostic — request/response, engine + drivetrain ECUs</span>
+      </label>
+    </fieldset>
+
+    <label class="baud">
       Baud rate
       <input type="number" bind:value={baudRate} min="300" max="115200" step="100" />
     </label>
@@ -47,7 +63,7 @@ async function pick(): Promise<void> {
     </button>
 
     <p class="muted small">
-      Chrome / Edge / Opera on HTTPS or <code>localhost</code> only.  Settings persist via
+      Chrome / Edge / Opera on HTTPS or <code>localhost</code> only. Settings persist via
       <code>localStorage</code>.
     </p>
   </div>
@@ -79,7 +95,45 @@ async function pick(): Promise<void> {
     font-size: 16px;
   }
 
-  label {
+  .protocol {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .protocol legend {
+    color: var(--fg-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0 4px;
+  }
+
+  .protocol label {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--fg);
+    cursor: pointer;
+  }
+
+  .proto-name {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .proto-hint {
+    color: var(--fg-muted);
+    font-size: 11px;
+  }
+
+  .baud {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -87,7 +141,7 @@ async function pick(): Promise<void> {
     color: var(--fg-muted);
   }
 
-  input {
+  input[type='number'] {
     background: var(--bg);
     color: var(--fg);
     border: 1px solid var(--border);

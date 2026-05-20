@@ -72,6 +72,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@emdzej/dbus-commands':
+        specifier: workspace:*
+        version: link:../../packages/dbus-commands
+      '@emdzej/dbus-devices':
+        specifier: workspace:*
+        version: link:../../packages/dbus-devices
+      '@emdzej/dbus-protocol':
+        specifier: workspace:*
+        version: link:../../packages/dbus-protocol
       '@emdzej/ibusx-core':
         specifier: workspace:*
         version: link:../../packages/core

@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { Device } from '@emdzej/ibusx-core'
 import { onMount } from 'svelte'
 import CommandBar from './lib/components/CommandBar.svelte'
 import ConnectScreen from './lib/components/ConnectScreen.svelte'
@@ -9,7 +8,6 @@ import StatePane from './lib/components/StatePane.svelte'
 import Toolbar from './lib/components/Toolbar.svelte'
 import { type Connection, connect } from './lib/connection.js'
 import { LOG_CAPACITY, type LogEntry } from './lib/log.js'
-import type { DeviceEntry } from './lib/registry.js'
 import {
   CONFIG_KEY,
   DEFAULT_CONFIG,
@@ -17,6 +15,7 @@ import {
   loadConfig,
   saveConfig,
 } from './lib/storage.js'
+import type { DisplayableDevice, DisplayableEntry } from './lib/types.js'
 
 let config = $state<IbusxConfig>({ ...DEFAULT_CONFIG, ...loadConfig<IbusxConfig>(CONFIG_KEY) })
 let connection = $state<Connection | undefined>(undefined)
@@ -42,6 +41,7 @@ async function handleConnect(port: SerialPort): Promise<void> {
     connection = await connect({
       port,
       baudRate: config.baudRate,
+      protocol: config.protocol,
       onLog: (entry) => {
         log = appendLog(log, entry)
       },
@@ -58,15 +58,19 @@ async function handleConnect(port: SerialPort): Promise<void> {
         connection = undefined
       },
     })
-    if (config.active && connection !== undefined) {
-      for (const d of connection.devices) d.mode = 'active'
+    // I/K-bus uses Device.mode for its passive/active gate; D-bus has no
+    // such mode (every request sends a frame), so the toggle is purely
+    // informational for D-bus controls that declare `requires: 'active'`.
+    if (connection.kind === 'ikbus' && config.active) {
+      for (const d of connection.bus.devices) d.mode = 'active'
     }
     log = appendLog(log, {
       id: Date.now(),
       kind: 'system',
       ts: Date.now(),
-      message: `connected to ${connection.portLabel}`,
+      message: `connected to ${connection.portLabel} (${connection.kind})`,
     })
+    selectedDeviceIndex = 0
   } catch (err) {
     connectError = err instanceof Error ? err.message : String(err)
   }
@@ -81,13 +85,14 @@ async function handleDisconnect(): Promise<void> {
 function toggleActive(): void {
   config.active = !config.active
   if (connection === undefined) return
-  for (const d of connection.devices) d.mode = config.active ? 'active' : 'passive'
+  if (connection.kind === 'ikbus') {
+    for (const d of connection.bus.devices) d.mode = config.active ? 'active' : 'passive'
+  }
 }
 
 async function invokeControl(
-  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
-  device: Device<any, any>,
-  entry: DeviceEntry,
+  device: DisplayableDevice,
+  entry: DisplayableEntry,
   controlName: string,
   args: Record<string, unknown>,
 ): Promise<void> {
@@ -104,7 +109,7 @@ async function invokeControl(
   }
   try {
     // biome-ignore lint/suspicious/noExplicitAny: param type erased at this generic call site
-    await descriptor.invoke(device, args as any)
+    await descriptor.invoke(device as any, args as any)
     log = appendLog(log, {
       id: Date.now(),
       kind: 'system',
@@ -127,14 +132,10 @@ function appendLog(arr: LogEntry[], entry: LogEntry): LogEntry[] {
   return next
 }
 
-// stateTick is passed down into StatePane (as a prop) so its `$derived`
-// re-evaluates whenever a device fires an event — Svelte 5 can't see
-// the plain class-field writes inside Device subclasses.
-
-let currentEntry = $derived(
+let currentEntry = $derived<DisplayableEntry | undefined>(
   connection !== undefined ? connection.entries[selectedDeviceIndex] : undefined,
 )
-let currentDevice = $derived(
+let currentDevice = $derived<DisplayableDevice | undefined>(
   connection !== undefined ? connection.devices[selectedDeviceIndex] : undefined,
 )
 </script>
@@ -144,14 +145,21 @@ let currentDevice = $derived(
   <Toolbar
     connected={connection !== undefined}
     active={config.active}
-    portLabel={connection?.portLabel ?? '—'}
+    portLabel={connection !== undefined
+      ? `${connection.portLabel} (${connection.kind})`
+      : '—'}
     onToggleActive={toggleActive}
     onDisconnect={handleDisconnect}
   />
 </header>
 
 {#if connection === undefined}
-  <ConnectScreen bind:baudRate={config.baudRate} error={connectError} onConnect={handleConnect} />
+  <ConnectScreen
+    bind:baudRate={config.baudRate}
+    bind:protocol={config.protocol}
+    error={connectError}
+    onConnect={handleConnect}
+  />
 {:else}
   <main>
     <aside>
@@ -175,17 +183,19 @@ let currentDevice = $derived(
       {/if}
     </section>
     <footer>
-      <CommandBar
-        bus={connection.bus}
-        onError={(message) => {
-          log = appendLog(log, {
-            id: Date.now(),
-            kind: 'error',
-            ts: Date.now(),
-            message,
-          })
-        }}
-      />
+      {#if connection.kind === 'ikbus'}
+        <CommandBar
+          bus={connection.bus}
+          onError={(message) => {
+            log = appendLog(log, {
+              id: Date.now(),
+              kind: 'error',
+              ts: Date.now(),
+              message,
+            })
+          }}
+        />
+      {/if}
       <EventLog entries={log} />
     </footer>
   </main>

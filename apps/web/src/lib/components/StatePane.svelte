@@ -1,11 +1,10 @@
 <script lang="ts">
-import type { ControlParam, Device } from '@emdzej/ibusx-core'
-import type { DeviceEntry } from '../registry.js'
+import type { ControlParam } from '@emdzej/ibusx-core'
+import type { DisplayableDevice, DisplayableEntry } from '../types.js'
 
 interface Props {
-  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
-  device: Device<any, any>
-  entry: DeviceEntry
+  device: DisplayableDevice
+  entry: DisplayableEntry
   active: boolean
   /**
    * Bumped by App.svelte on every device event.  Touched inside the

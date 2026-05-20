@@ -22,14 +22,19 @@ export function saveConfig<T>(key: string, value: T): void {
   }
 }
 
+/** Which protocol shell to bring up after `Connect`. */
+export type Protocol = 'ikbus' | 'dbus'
+
 export interface IbusxConfig {
   baudRate: number
   active: boolean
+  protocol: Protocol
 }
 
 export const DEFAULT_CONFIG: IbusxConfig = {
   baudRate: 9600,
   active: false,
+  protocol: 'ikbus',
 }
 
 export const CONFIG_KEY = 'ibusx.config'

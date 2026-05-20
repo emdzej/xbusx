@@ -11,8 +11,11 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
-    "@emdzej/ikbus-commands": "workspace:*",
+    "@emdzej/dbus-commands": "workspace:*",
+    "@emdzej/dbus-devices": "workspace:*",
+    "@emdzej/dbus-protocol": "workspace:*",
     "@emdzej/ibusx-core": "workspace:*",
+    "@emdzej/ikbus-commands": "workspace:*",
     "@emdzej/ikbus-devices": "workspace:*",
     "@emdzej/ikbus-protocol": "workspace:*",
     "@emdzej/transport-web-serial": "workspace:*"

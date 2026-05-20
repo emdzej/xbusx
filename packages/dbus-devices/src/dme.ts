@@ -5,7 +5,7 @@ import {
   parseResponse,
 } from '@emdzej/dbus-commands'
 import { DBUS_ADDRESSES, type DeviceAddress } from '@emdzej/dbus-protocol'
-import { TypedEmitter } from '@emdzej/ibusx-core'
+import { type ControlsManifest, TypedEmitter } from '@emdzej/ibusx-core'
 import type { DBus, DBusRequestOptions } from './dbus.js'
 import { DBusNegativeResponseError } from './errors.js'
 
@@ -62,3 +62,25 @@ export class DME {
     return ident
   }
 }
+
+/**
+ * UI control manifest for `DME`. The CLI / TUI / web walk this to render
+ * buttons that issue DS2 queries.
+ *
+ * Note: D-bus queries always send a frame on the wire (D-bus is
+ * request/response — there's no "observe-only" mode). The `requires`
+ * field is therefore left at the default (`passive`) for reads — they're
+ * always safe to issue. Coding-write controls (when added) should set
+ * `requires: 'active'` to keep the safety toggle meaningful for the
+ * dangerous operations.
+ */
+export const DMEControls = {
+  readIdentification: {
+    label: 'Read identification',
+    description: 'DS2 0x00 — request ECU identification (hardware/coding/firmware indices).',
+    params: {},
+    invoke: async (d: DME, _args: object) => {
+      await d.readIdentification()
+    },
+  },
+} as const satisfies ControlsManifest<DME>
