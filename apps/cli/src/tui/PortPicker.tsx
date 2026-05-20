@@ -1,6 +1,7 @@
 import { Select } from '@inkjs/ui'
 import { Box, Text } from 'ink'
 import { type ReactElement, useEffect, useState } from 'react'
+import type { BusKind } from '../types.js'
 
 interface PortInfo {
   path: string
@@ -8,15 +9,16 @@ interface PortInfo {
 }
 
 interface Props {
+  bus: BusKind
   onPick: (path: string) => void
 }
 
 /**
- * Initial screen shown when `ibusx` is invoked bare.  Lists the host's serial
- * ports and lets the user pick one with arrow keys + Enter.  On pick, the
- * parent App swaps in the main TUI bound to that port.
+ * Initial screen shown when `ibusx` is invoked bare. Lists the host's
+ * serial ports and lets the user pick one with arrow keys + Enter. On
+ * pick, the parent App swaps in the main TUI bound to that port.
  */
-export function PortPicker({ onPick }: Props): ReactElement {
+export function PortPicker({ bus, onPick }: Props): ReactElement {
   const [ports, setPorts] = useState<PortInfo[] | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
 
@@ -37,6 +39,8 @@ export function PortPicker({ onPick }: Props): ReactElement {
       cancelled = true
     }
   }, [])
+
+  const busLabel = bus === 'ikbus' ? 'I/K-bus' : 'D-bus (DS2)'
 
   if (error !== undefined) {
     return (
@@ -60,8 +64,8 @@ export function PortPicker({ onPick }: Props): ReactElement {
       <Box flexDirection="column" padding={1}>
         <Text color="yellow">No serial ports detected.</Text>
         <Text dimColor>
-          Plug in an FTDI adapter and re-run, or use <Text bold>ibusx tui -p /dev/...</Text> with an
-          explicit path.
+          Plug in an FTDI adapter and re-run, or use{' '}
+          <Text bold>ibusx tui --bus {bus} -p /dev/...</Text> with an explicit path.
         </Text>
         <Text dimColor>Press Ctrl+C to exit.</Text>
       </Box>
@@ -72,7 +76,9 @@ export function PortPicker({ onPick }: Props): ReactElement {
 
   return (
     <Box flexDirection="column" padding={1}>
-      <Text bold>Select a serial port</Text>
+      <Text bold>
+        Select a serial port — bus: <Text color="cyan">{busLabel}</Text>
+      </Text>
       <Text dimColor>↑/↓ to navigate, Enter to confirm, Ctrl+C to quit.</Text>
       <Box marginTop={1}>
         <Select
@@ -83,7 +89,7 @@ export function PortPicker({ onPick }: Props): ReactElement {
         />
       </Box>
       <Box marginTop={1}>
-        <Text dimColor>(or pass --port to skip this picker)</Text>
+        <Text dimColor>(or pass --port / --bus to skip prompts)</Text>
       </Box>
     </Box>
   )

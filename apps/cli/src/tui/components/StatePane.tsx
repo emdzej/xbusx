@@ -1,11 +1,11 @@
-import type { ControlsManifest, Device } from '@emdzej/ibusx-core'
+import type { ControlsManifest } from '@emdzej/ibusx-core'
 import { Box, Text } from 'ink'
 import type { ReactElement } from 'react'
+import type { DisplayableDevice } from '../../types.js'
 
 interface Props {
-  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous device generics
-  device: Device<any, any>
-  // biome-ignore lint/suspicious/noExplicitAny: same
+  device: DisplayableDevice
+  // biome-ignore lint/suspicious/noExplicitAny: per-device control param widens
   controls: ControlsManifest<any>
   controlIndex: number
   focused: boolean
@@ -56,6 +56,10 @@ function formatValue(value: unknown): string {
   if (value === undefined) return '—'
   if (value === null) return 'null'
   if (typeof value === 'object') {
+    const maybeBytes = value as { data?: Uint8Array }
+    if (maybeBytes.data instanceof Uint8Array) {
+      return `[${Array.from(maybeBytes.data, (b) => b.toString(16).padStart(2, '0')).join(' ')}]`
+    }
     try {
       return JSON.stringify(value)
     } catch {

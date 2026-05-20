@@ -1,12 +1,10 @@
-import type { Device } from '@emdzej/ibusx-core'
 import { Box, Text } from 'ink'
 import type { ReactElement } from 'react'
-import type { DeviceEntry } from '../../registry.js'
+import type { DisplayableDevice, DisplayableEntry } from '../../types.js'
 
 interface Props {
-  entries: readonly DeviceEntry[]
-  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous device generics
-  devices: readonly Device<any, any>[]
+  entries: readonly DisplayableEntry[]
+  devices: readonly DisplayableDevice[]
   selectedIndex: number
   focused: boolean
 }

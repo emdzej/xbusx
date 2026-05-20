@@ -1,35 +1,33 @@
-import type { Device, IKBus } from '@emdzej/ibusx-core'
 import { Box, useApp, useInput } from 'ink'
 import { type ReactElement, useEffect, useState } from 'react'
-import type { DeviceEntry } from '../registry.js'
+import type { DisplayableDevice } from '../types.js'
 import { appendLog, attachBusListeners } from './bus.js'
 import { DeviceList } from './components/DeviceList.js'
 import { EventLog } from './components/EventLog.js'
 import { Footer } from './components/Footer.js'
 import { StatePane } from './components/StatePane.js'
+import type { AttachedSession } from './launch.js'
 import { type LogEntry, nextLogId } from './log.js'
 
 interface AppProps {
-  bus: IKBus
+  session: AttachedSession
   port: string
-  entries: readonly DeviceEntry[]
-  // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
-  devices: readonly Device<any, any>[]
 }
 
 type Focus = 'devices' | 'controls'
 
-export function App({ bus, port, entries, devices }: AppProps): ReactElement {
+export function App({ session, port }: AppProps): ReactElement {
   const { exit } = useApp()
+  const { bus, busKind, entries, devices, setActive } = session
   const [selectedDevice, setSelectedDevice] = useState(0)
   const [selectedControl, setSelectedControl] = useState(0)
   const [focus, setFocus] = useState<Focus>('devices')
-  const [active, setActive] = useState(false)
+  const [active, setActiveState] = useState(false)
   const [status, setStatus] = useState('idle')
   const [log, setLog] = useState<readonly LogEntry[]>([])
 
   useEffect(() => {
-    const detach = attachBusListeners(bus, devices, (entry) => {
+    const detach = attachBusListeners(bus, busKind, devices, (entry) => {
       setLog((prev) => appendLog(prev, entry))
     })
     setLog((prev) =>
@@ -37,11 +35,11 @@ export function App({ bus, port, entries, devices }: AppProps): ReactElement {
         id: nextLogId(),
         kind: 'system',
         ts: Date.now(),
-        message: `listening on ${port}`,
+        message: `listening on ${port} (${busKind})`,
       }),
     )
     return detach
-  }, [bus, devices, port])
+  }, [bus, busKind, devices, port])
 
   const currentEntry = entries[selectedDevice]
   const currentDevice = devices[selectedDevice]
@@ -54,8 +52,8 @@ export function App({ bus, port, entries, devices }: AppProps): ReactElement {
     }
     if (input === 'a') {
       const next = !active
+      setActiveState(next)
       setActive(next)
-      for (const d of devices) d.mode = next ? 'active' : 'passive'
       return
     }
     if (key.tab) {
@@ -97,7 +95,7 @@ export function App({ bus, port, entries, devices }: AppProps): ReactElement {
     }
     setStatus(`invoking ${currentEntry.name}.${name}…`)
     try {
-      await descriptor.invoke(currentDevice, {})
+      await descriptor.invoke(currentDevice as DisplayableDevice, {})
       setStatus(`ok ${currentEntry.name}.${name}`)
     } catch (err) {
       setStatus(`err: ${err instanceof Error ? err.message : String(err)}`)
@@ -123,7 +121,7 @@ export function App({ bus, port, entries, devices }: AppProps): ReactElement {
         ) : null}
       </Box>
       <EventLog entries={log} rows={10} />
-      <Footer port={port} active={active} status={status} />
+      <Footer port={port} busKind={busKind} active={active} status={status} />
     </Box>
   )
 }

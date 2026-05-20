@@ -1,41 +1,29 @@
-import type { Device, IKBus } from '@emdzej/ibusx-core'
 import { Box, Text, useApp } from 'ink'
 import { type ReactElement, useEffect, useState } from 'react'
-import type { DeviceEntry } from '../registry.js'
+import type { BusKind } from '../types.js'
 import { App } from './App.js'
+import type { AttachedSession } from './launch.js'
 import { PortPicker } from './PortPicker.js'
 
 interface Props {
   initialPort?: string
   baudRate: number
+  bus: BusKind
   /**
-   * Once a port is chosen, the root calls this to construct a bus + register
-   * devices.  Returns the bus, port label, and the registered device list
-   * that the inner `App` will read state from.  Doing this here keeps the
-   * picker → bus boundary contained in React; the bin entry just renders
-   * `<TuiRoot/>`.
+   * Once a port is chosen, the root calls this to construct a bus +
+   * register devices. Returns an `AttachedSession` that the inner `App`
+   * reads state and controls from.
    */
-  attach: (port: string) => Promise<{
-    bus: IKBus
-    entries: readonly DeviceEntry[]
-    // biome-ignore lint/suspicious/noExplicitAny: heterogeneous generics
-    devices: readonly Device<any, any>[]
-  }>
+  attach: (port: string) => Promise<AttachedSession>
 }
 
 type Stage =
   | { phase: 'picker' }
   | { phase: 'connecting'; port: string }
-  | {
-      phase: 'ready'
-      port: string
-      bus: IKBus
-      entries: readonly DeviceEntry[]
-      devices: readonly Device<object, never>[]
-    }
+  | { phase: 'ready'; port: string; session: AttachedSession }
   | { phase: 'error'; message: string }
 
-export function TuiRoot({ initialPort, attach, baudRate }: Props): ReactElement {
+export function TuiRoot({ initialPort, attach, baudRate, bus }: Props): ReactElement {
   const { exit } = useApp()
   const [stage, setStage] = useState<Stage>(() =>
     initialPort !== undefined ? { phase: 'connecting', port: initialPort } : { phase: 'picker' },
@@ -46,18 +34,12 @@ export function TuiRoot({ initialPort, attach, baudRate }: Props): ReactElement 
     let cancelled = false
     void (async () => {
       try {
-        const { bus, entries, devices } = await attach(stage.port)
+        const session = await attach(stage.port)
         if (cancelled) {
-          await bus.stop()
+          await session.stop()
           return
         }
-        setStage({
-          phase: 'ready',
-          port: stage.port,
-          bus,
-          entries,
-          devices: devices as readonly Device<object, never>[],
-        })
+        setStage({ phase: 'ready', port: stage.port, session })
       } catch (err) {
         if (cancelled) return
         const message = err instanceof Error ? err.message : String(err)
@@ -72,6 +54,7 @@ export function TuiRoot({ initialPort, attach, baudRate }: Props): ReactElement 
   if (stage.phase === 'picker') {
     return (
       <PortPicker
+        bus={bus}
         onPick={(port) => {
           setStage({ phase: 'connecting', port })
         }}
@@ -83,7 +66,7 @@ export function TuiRoot({ initialPort, attach, baudRate }: Props): ReactElement 
     return (
       <Box padding={1}>
         <Text dimColor>
-          Opening {stage.port} at {baudRate} 8E1…
+          Opening {stage.port} at {baudRate} 8E1 ({bus})…
         </Text>
       </Box>
     )
@@ -94,13 +77,12 @@ export function TuiRoot({ initialPort, attach, baudRate }: Props): ReactElement 
       <Box flexDirection="column" padding={1}>
         <Text color="red">{stage.message}</Text>
         <Text dimColor>Press Ctrl+C or q to exit.</Text>
-        {/* exit on next render — useEffect can't read state set in render path */}
         <ExitOnMount exit={exit} />
       </Box>
     )
   }
 
-  return <App bus={stage.bus} port={stage.port} entries={stage.entries} devices={stage.devices} />
+  return <App session={stage.session} port={stage.port} />
 }
 
 function ExitOnMount({ exit }: { exit: () => void }): null {

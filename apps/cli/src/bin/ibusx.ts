@@ -12,7 +12,7 @@ const program = new Command()
 program
   .name('ibusx')
   .description(
-    'BMW I/K-bus toolkit.  Run with no arguments to launch the interactive TUI (with port picker).',
+    'BMW I/K-bus and D-bus (DS2) toolkit. Run with no arguments to launch the interactive TUI on the I/K-bus (use `ibusx tui --bus dbus` for D-bus).',
   )
   .version('0.0.0')
 
@@ -27,7 +27,7 @@ registerTuiCommand(program)
 // normal subcommand routing.
 const noArgs = process.argv.length <= 2
 if (noArgs) {
-  launchTui({ baudRate: 9600 }).catch(handleFatal)
+  launchTui({ baudRate: 9600, bus: 'ikbus' }).catch(handleFatal)
 } else {
   program.parseAsync(process.argv).catch(handleFatal)
 }
