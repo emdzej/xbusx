@@ -1,4 +1,4 @@
-import { type DBus, DME, DMEControls } from '@emdzej/dbus-devices'
+import { type DBus, DME, DMEControls, EGS, EGSControls } from '@emdzej/dbus-devices'
 import type { DisplayableDevice, DisplayableEntry } from './types.js'
 
 /**
@@ -21,6 +21,7 @@ export interface DBusDeviceEntry extends DisplayableEntry {
  */
 export const DBUS_DEVICE_REGISTRY: readonly DBusDeviceEntry[] = [
   { name: 'DME', implemented: true, controls: DMEControls, create: (bus) => new DME(bus) },
+  { name: 'EGS', implemented: true, controls: EGSControls, create: (bus) => new EGS(bus) },
 ]
 
 /**

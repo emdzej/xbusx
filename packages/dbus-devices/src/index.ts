@@ -1,3 +1,5 @@
 export * from './dbus.js'
 export * from './dme.js'
+export * from './ecu.js'
+export * from './egs.js'
 export * from './errors.js'
