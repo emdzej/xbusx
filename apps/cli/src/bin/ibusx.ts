@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { configureLogger } from '@emdzej/bimmerz-logger'
 import { Command } from 'commander'
 import { registerInvokeCommand } from '../commands/invoke.js'
 import { registerListDevicesCommand } from '../commands/list-devices.js'
@@ -6,6 +7,19 @@ import { registerListPortsCommand } from '../commands/list-ports.js'
 import { registerMonitorCommand } from '../commands/monitor.js'
 import { registerTuiCommand } from '../commands/tui.js'
 import { launchTui } from '../tui/launch.js'
+import { resolveLoggerConfig } from '../utils/logger-config.js'
+
+// Configure the central bimmerz-logger from env vars BEFORE any
+// command runs. The library never reads `process.env` (it has to
+// stay browser-portable); the CLI is the host that translates env
+// vars (`XBUSX_LOG_LEVEL`, `XBUSX_LOG_CATEGORIES`,
+// `XBUSX_LOG_DESTINATION`, `XBUSX_LOG_FORMAT`) into a `LoggerConfig`.
+configureLogger(
+  resolveLoggerConfig({
+    env: process.env,
+    isTty: process.stdout.isTTY ?? false,
+  }),
+)
 
 const program = new Command()
 

@@ -5,9 +5,11 @@ interface Props {
   portLabel: string
   onToggleActive: () => void
   onDisconnect: () => void | Promise<void>
+  onOpenSettings: () => void
 }
 
-let { connected, active, portLabel, onToggleActive, onDisconnect }: Props = $props()
+let { connected, active, portLabel, onToggleActive, onDisconnect, onOpenSettings }: Props =
+  $props()
 </script>
 
 <div class="toolbar">
@@ -21,6 +23,9 @@ let { connected, active, portLabel, onToggleActive, onDisconnect }: Props = $pro
   {:else}
     <span class="status">disconnected</span>
   {/if}
+  <button class="settings" onclick={onOpenSettings} aria-label="Settings" title="Settings">
+    ⚙
+  </button>
 </div>
 
 <style>
@@ -57,5 +62,11 @@ let { connected, active, portLabel, onToggleActive, onDisconnect }: Props = $pro
   button.on {
     color: var(--green);
     border-color: var(--green);
+  }
+
+  button.settings {
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1;
   }
 </style>

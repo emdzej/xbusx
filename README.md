@@ -39,6 +39,45 @@ pnpm test
 
 See [`docs/README.md`](docs/README.md) for the table of contents and reading paths.
 
+## Logging
+
+Powered by [`@emdzej/bimmerz-logger`](https://github.com/emdzej/bimmerz/tree/main/packages/logger).
+The library never reads `process.env`; the CLI translates env vars
+into the central logger config at boot, and the web app applies
+persisted settings from `localStorage["ibusx.config"]`'s `logging`
+field.
+
+CLI env namespace:
+
+| Variable | Values | Effect |
+|---|---|---|
+| `XBUSX_LOG_LEVEL` | `trace\|debug\|info\|warn\|error\|fatal\|silent` | Default level |
+| `XBUSX_LOG_CATEGORIES` | `cat=lvl,cat=lvl,…` | Per-category overrides (hierarchical) |
+| `XBUSX_LOG_DESTINATION` | path | Write to file instead of stdout |
+| `XBUSX_LOG_FORMAT` | `pretty\|json` | Output format |
+
+Examples:
+
+```bash
+XBUSX_LOG_LEVEL=debug ibusx                       # bump default to debug
+XBUSX_LOG_CATEGORIES="XBUSX.ikbus=trace" ibusx    # only ikbus subsystem
+XBUSX_LOG_FORMAT=json XBUSX_LOG_DESTINATION=/tmp/x.log ibusx
+```
+
+Currently-active categories (hierarchical — a rule for `XBUSX`
+covers every subcategory unless overridden):
+
+- `XBUSX` — catch-all
+- `XBUSX.ikbus` — I/K-bus protocol stack
+- `XBUSX.dbus` — D-bus (DS2) protocol stack
+- `XBUSX.transport` — serial transport
+- `XBUSX.web` — web app (connection lifecycle, registry events)
+- `XBUSX.cli` — CLI app
+
+The web app reads its level + categories from
+`localStorage["ibusx.config"]` (under the `logging` key). No
+Settings UI yet — a future dialog will surface it.
+
 ## Status
 
 Work in progress. Each documentation claim is cited to its source; disagreements between sources are surfaced rather than smoothed over. See [`docs/conventions.md`](docs/conventions.md) for the citation format.

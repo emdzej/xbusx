@@ -1,3 +1,4 @@
+import { getLogger } from '@emdzej/bimmerz-logger'
 import { DBus } from '@emdzej/dbus-devices'
 import { addressName as dbusAddressName } from '@emdzej/dbus-protocol'
 import { IKBus, Vehicle } from '@emdzej/ibusx-core'
@@ -8,6 +9,8 @@ import { type DeviceEntry, registerAll } from './registry.js'
 import { type DBusDeviceEntry, registerAllDBus } from './registry-dbus.js'
 import type { Protocol } from './storage.js'
 import type { DisplayableDevice } from './types.js'
+
+const log = getLogger('XBUSX.web')
 
 interface BaseConnection {
   readonly portLabel: string
@@ -49,7 +52,13 @@ interface ConnectArgs {
  * every interesting bus event so Svelte can render incrementally.
  */
 export async function connect(args: ConnectArgs): Promise<Connection> {
-  return args.protocol === 'ikbus' ? connectIKBus(args) : connectDBus(args)
+  log.info(
+    { protocol: args.protocol, baudRate: args.baudRate, port: portLabel(args.port) },
+    'opening connection',
+  )
+  const conn = await (args.protocol === 'ikbus' ? connectIKBus(args) : connectDBus(args))
+  log.debug({ protocol: args.protocol }, 'connection opened')
+  return conn
 }
 
 async function connectIKBus(args: ConnectArgs): Promise<IKBusConnection> {

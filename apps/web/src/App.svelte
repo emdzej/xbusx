@@ -4,6 +4,7 @@ import CommandBar from './lib/components/CommandBar.svelte'
 import ConnectScreen from './lib/components/ConnectScreen.svelte'
 import DeviceList from './lib/components/DeviceList.svelte'
 import EventLog from './lib/components/EventLog.svelte'
+import SettingsDialog from './lib/components/SettingsDialog.svelte'
 import StatePane from './lib/components/StatePane.svelte'
 import Toolbar from './lib/components/Toolbar.svelte'
 import { type Connection, connect } from './lib/connection.js'
@@ -23,6 +24,7 @@ let connectError = $state<string | undefined>(undefined)
 let log = $state<LogEntry[]>([])
 let stateTick = $state(0)
 let selectedDeviceIndex = $state(0)
+let showSettings = $state(false)
 
 onMount(() => {
   const supported = typeof navigator !== 'undefined' && 'serial' in navigator
@@ -141,7 +143,7 @@ let currentDevice = $derived<DisplayableDevice | undefined>(
 </script>
 
 <header>
-  <h1>ibusx</h1>
+  <h1>XBUS<span class="accent">X</span></h1>
   <Toolbar
     connected={connection !== undefined}
     active={config.active}
@@ -150,8 +152,11 @@ let currentDevice = $derived<DisplayableDevice | undefined>(
       : '—'}
     onToggleActive={toggleActive}
     onDisconnect={handleDisconnect}
+    onOpenSettings={() => (showSettings = true)}
   />
 </header>
+
+<SettingsDialog open={showSettings} onClose={() => (showSettings = false)} />
 
 {#if connection === undefined}
   <ConnectScreen
@@ -214,8 +219,13 @@ let currentDevice = $derived<DisplayableDevice | undefined>(
   h1 {
     margin: 0;
     font-size: 16px;
-    color: var(--accent);
+    color: var(--fg);
     letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+
+  h1 .accent {
+    color: var(--accent);
   }
 
   main {

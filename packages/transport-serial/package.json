@@ -23,6 +23,7 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
+    "@emdzej/bimmerz-logger": "^0.1.2",
     "@emdzej/ibusx-core": "workspace:*",
     "serialport": "^13.0.0"
   },

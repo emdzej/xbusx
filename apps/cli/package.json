@@ -19,6 +19,7 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
+    "@emdzej/bimmerz-logger": "^0.1.2",
     "@emdzej/dbus-commands": "workspace:*",
     "@emdzej/dbus-devices": "workspace:*",
     "@emdzej/dbus-protocol": "workspace:*",
