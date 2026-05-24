@@ -143,7 +143,47 @@ let currentDevice = $derived<DisplayableDevice | undefined>(
 </script>
 
 <header>
-  <h1>XBUS<span class="accent">X</span></h1>
+  <div class="title-group">
+    <h1>XBUS<span class="accent">X</span></h1>
+    <!-- Build version surfaced from package.json via Vite `define`.
+         Linked to the matching git tag so users can pop the changelog
+         in one click. Faint styling keeps it as metadata, not chrome. -->
+    <a
+      class="version"
+      href="https://github.com/emdzej/xbusx/releases/tag/{__APP_VERSION__}"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Release notes on GitHub"
+    >
+      {__APP_VERSION__}
+    </a>
+    <!-- GitHub repo link. The 16x16 mark is GitHub's official
+         public-domain octocat SVG (https://github.com/logos); we
+         inline rather than reference an asset so the icon picks up
+         the theme colour (`currentColor`) and renders before any
+         network fetch. -->
+    <a
+      class="repo-link"
+      href="https://github.com/emdzej/xbusx"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="xbusx on GitHub"
+      aria-label="xbusx on GitHub"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        width="16"
+        height="16"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+        />
+      </svg>
+    </a>
+  </div>
   <Toolbar
     connected={connection !== undefined}
     active={config.active}
@@ -216,6 +256,15 @@ let currentDevice = $derived<DisplayableDevice | undefined>(
     background: var(--bg-elev);
   }
 
+  /* Left side of the header — title sits next to the version pill
+   * and the GitHub icon as a tight group. Toolbar stays right-aligned
+   * via header's `justify-content: space-between`. */
+  .title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
   h1 {
     margin: 0;
     font-size: 16px;
@@ -226,6 +275,28 @@ let currentDevice = $derived<DisplayableDevice | undefined>(
 
   h1 .accent {
     color: var(--accent);
+  }
+
+  .version {
+    font-size: 11px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--fg-muted);
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.15s ease;
+  }
+  .version:hover {
+    color: var(--fg);
+  }
+
+  .repo-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--fg-muted);
+    transition: color 0.15s ease;
+  }
+  .repo-link:hover {
+    color: var(--fg);
   }
 
   main {

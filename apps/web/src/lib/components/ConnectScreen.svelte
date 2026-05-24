@@ -41,11 +41,17 @@ async function pick(): Promise<void> {
         <input type="radio" bind:group={protocol} value="ikbus" />
         <span class="proto-name">I/K-bus</span>
         <span class="proto-hint">single-wire body/comfort bus — passive broadcast observation</span>
+        <span class="proto-hw">
+          needs a serial interface with a <strong>TH3122</strong> transceiver IC (or equivalent)
+        </span>
       </label>
       <label>
         <input type="radio" bind:group={protocol} value="dbus" />
         <span class="proto-name">D-bus (DS2)</span>
         <span class="proto-hint">OBD-II diagnostic — request/response, engine + drivetrain ECUs</span>
+        <span class="proto-hw">
+          needs an <strong>INPA K+DCAN</strong> serial interface
+        </span>
       </label>
     </fieldset>
 
@@ -113,11 +119,18 @@ async function pick(): Promise<void> {
     padding: 0 4px;
   }
 
+  /* Three rows per radio:
+   *   row 1: radio | name | hint (single short tagline)
+   *   row 2: empty | empty | hardware note (smaller, distinct)
+   * `grid-column: 3` on the hardware span pushes it under the hint
+   * column so it aligns with the rest of the text rather than the
+   * radio button. */
   .protocol label {
     display: grid;
     grid-template-columns: auto auto 1fr;
     align-items: baseline;
-    gap: 8px;
+    gap: 4px 8px;
+    padding: 4px 0;
     font-size: 12px;
     color: var(--fg);
     cursor: pointer;
@@ -131,6 +144,17 @@ async function pick(): Promise<void> {
   .proto-hint {
     color: var(--fg-muted);
     font-size: 11px;
+  }
+
+  .proto-hw {
+    grid-column: 3;
+    color: var(--fg-muted);
+    font-size: 11px;
+    opacity: 0.75;
+  }
+  .proto-hw strong {
+    color: var(--fg);
+    font-weight: 600;
   }
 
   .baud {
